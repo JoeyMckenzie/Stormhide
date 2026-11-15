@@ -175,9 +175,8 @@ end
 
 -- Aura IDs that make the entry "active": for items, the auras of their use effects. Never empty:
 -- an AuraContainer with no IDs to match might match everything, so a placeholder stands in.
--- Abilities shown for their cooldown only, never as active: Faerie Fire's debuff (~40s) would keep
--- its icon lit long after the 6s Cat/Bear cooldown that matters.
-local COOLDOWN_ONLY = { ns.SPELL.FAERIE_FIRE }
+-- Abilities shown for their cooldown only, never as active.
+local COOLDOWN_ONLY = {}
 
 local function CooldownOnly(entry)
     return not Items.IsItemEntry(entry) and ns.IsSpellNamed(C_Spell.GetSpellName(entry), COOLDOWN_ONLY)
@@ -289,7 +288,7 @@ end
 
 -- Learning buffs ----------------------------------------------------------------------------------
 
-local IGNORED_BUFFS = { [16870] = true } -- Clearcasting: procs on its own, could start at any cast
+local IGNORED_BUFFS = {}
 
 -- After a tracked ability is cast (out of combat), find our buff on us or debuff on the target that
 -- started with it. Nothing to learn if one of them has the ability's own spell ID: that already matches.
@@ -855,9 +854,8 @@ local function WalkSpellbook(visit)
 end
 
 -- Why a spellbook entry isn't offered, or nil if it is.
--- Spells whose cooldown only exists in some forms, offered even when we haven't seen it yet:
--- Faerie Fire becomes Faerie Fire (Feral), which has a cooldown, in Cat and Bear Form.
-local FORM_COOLDOWN = { ns.SPELL.FAERIE_FIRE }
+-- Spells whose cooldown only exists in some forms, offered even when we haven't seen it yet.
+local FORM_COOLDOWN = {}
 
 -- Does the spell have a cooldown of its own (not just the GCD), in any form? Checks the spellbook
 -- entry, its base spell and the current form's version; a form version seen with a cooldown is

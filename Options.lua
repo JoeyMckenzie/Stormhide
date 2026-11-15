@@ -293,19 +293,10 @@ local function BookmarkTabs(anchor, firstX, edge, height, level)
     end
 end
 
--- Side tab icons: classic WoW icons by path, and Shifting Power's (a blue spirit cat) looked up by
--- spell once spell data has loaded, with a cat's face (SIDE_TAB_FALLBACKS) until then or if it
--- isn't found.
-local function ShiftingPowerIcon()
-    local name = ns.SpellName(ns.SPELL.SHIFTING_POWER)
-    local info = name and C_Spell.GetSpellInfo(name)
-    return info and info.iconID
-end
-
-local SIDE_TAB_FALLBACKS = { Rotation = "Interface\\Icons\\Ability_Hunter_Pet_Cat" }
+-- Side tab icons: classic WoW icons by path.
 local SIDE_TAB_ICONS = {
     General = "Interface\\Icons\\INV_Misc_Gear_01", -- a cog
-    Rotation = ShiftingPowerIcon,
+    Rotation = "Interface\\Icons\\Spell_Nature_Lightning",
     Cooldown = "Interface\\Icons\\INV_Misc_PocketWatch_01", -- a pocket watch
 }
 
@@ -317,7 +308,7 @@ local function SideTab(parent, name, previous, key)
     tab:SetSize(art.SIDE_TAB_WIDTH, art.SIDE_TAB_HEIGHT)
     tab.index = previous and previous.index + 1 or 0
     tab:SetPoint("TOPLEFT", window, "TOPRIGHT", -SIDE_TAB_TUCK, -(SIDE_TAB_TOP + tab.index * SIDE_TAB_STEP))
-    tab.SetSelected = art.SideTab(tab, SIDE_TAB_ICONS[key], SIDE_TAB_FALLBACKS[key])
+    tab.SetSelected = art.SideTab(tab, SIDE_TAB_ICONS[key])
     tab:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(name)
@@ -1011,8 +1002,6 @@ local function ZonePicture(parent, zoneId)
     end
 end
 
-local SEGMENT_HEIGHT = 28 -- the preview strip's buttons (Rotation tab)
-
 local function ChoiceText(values, value)
     for _, entry in ipairs(values) do
         if entry.value == value then
@@ -1250,8 +1239,8 @@ EndTab(general)
 
 -- Rotation tab: the HUD (the Rotation Frame) --------------------------------------------------------
 
--- Across the top, the HUD's on/off, scale and opacity (shared by every form), then the preview strip.
--- Under them two panes: on the left a strip of zones (General, then Elements.lua's ns.ZONES) and the shown
+-- Across the top, the HUD's on/off, scale and opacity. Under them two panes: on the left a strip of
+-- zones (Elements.lua's ns.ZONES) and the shown
 -- zone's elements; on the right the selected element's page. The element rows are the tabs of a
 -- TabGroup, so each element's page is built like any sub-tab's. (docs/settings-plan.md)
 local rotation = topTabs.Add(L["Rotation"], "Rotation")
@@ -1266,7 +1255,6 @@ do
     -- Scale and opacity in percent, so the steps are whole numbers. Opacity fades the whole HUD; each
     -- element's own opacity multiplies with it. Position: an offset from the screen centre (0 / 0 is
     -- dead centre, range half the screen), or dragged in Edit Mode.
-    local HUD_INSET = art.EDGE_INSET + PANEL_PAD -- the preview strip's, matching the HUD controls'
     local hudPanel = FramePanel(rotation.page, {
         name = L["Rotation Frame"],
         isOn = function() return ns.db.hudEnabled end,
@@ -1294,91 +1282,8 @@ do
     })
     local hudHeight = hudPanel:GetHeight()
 
-    -- The preview strip, across the window under the HUD controls: what the HUD shows while this tab
-    -- is open (Preview.lua's sample states). A form, and beside it a Stealth toggle laying stealth's
-    -- look over Cat Form (Prowl) or Caster (Shadowmeld); Bear Form can't stealth, so it's dimmed
-    -- there. A band of its own, apart from the panes, labelled "Preview", so it reads as changing
-    -- only what the HUD shows, not settings per form (owner, 2026-10-09).
-    local PREVIEW_LABEL = 66 -- the label's column
-    local FORM_WIDTH, FORM_GAP = 72, 4 -- each of Caster, Bear and Cat
-    local STEALTH_WIDTH = 110
-    local previewPanel = CreateFrame("Frame", nil, rotation.page)
-    previewPanel:SetPoint("TOPLEFT", PAD, -(PAD + hudHeight + PAD))
-    previewPanel:SetPoint("TOPRIGHT", -PAD, -(PAD + hudHeight + PAD))
-    previewPanel:SetHeight(2 * HUD_INSET + SEGMENT_HEIGHT)
-    art.Panel(previewPanel)
-
-    local previewLabel = previewPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    previewLabel:SetPoint("LEFT", previewPanel, "TOPLEFT", HUD_INSET, -(HUD_INSET + SEGMENT_HEIGHT / 2))
-    previewLabel:SetText(L["Preview"])
-    -- The buttons: rounded, in the Cooldown tab's bookmark look (owner, 2026-10-09). The picked one
-    -- is bright with white text, the others darker with gold text, white on hover.
-    local function PreviewButton(width)
-        local button = CreateFrame("Button", nil, previewPanel)
-        button:SetSize(width, SEGMENT_HEIGHT)
-        button.SetShade = art.RoundTab(button)
-        button.text = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        button.text:SetPoint("CENTER", 0, 1)
-        return button
-    end
-
-    local previous
-    for _, entry in ipairs(ns.Preview.STATES) do
-        local button = PreviewButton(FORM_WIDTH)
-        if previous then
-            button:SetPoint("LEFT", previous, "RIGHT", FORM_GAP, 0)
-        else
-            button:SetPoint("TOPLEFT", HUD_INSET + PREVIEW_LABEL, -HUD_INSET)
-        end
-        button.text:SetText(entry.short or entry.text)
-        local hovered = false
-        local function Paint()
-            local on = ns.Preview.GetState() == entry.value
-            button.SetShade(on)
-            button.text:SetTextColor(unpack((on or hovered) and WHITE or GOLD))
-        end
-        button:SetScript("OnEnter", function()
-            hovered = true
-            Paint()
-        end)
-        button:SetScript("OnLeave", function()
-            hovered = false
-            Paint()
-        end)
-        button:SetScript("OnClick", function() ns.Preview.SetState(entry.value) end)
-        refreshers[#refreshers + 1] = Paint
-        previous = button
-    end
-
-    local stealthToggle = PreviewButton(STEALTH_WIDTH)
-    stealthToggle:SetPoint("LEFT", previous, "RIGHT", 12, 0)
-    local stealthText = stealthToggle.text
-    local stealthHovered = false
-    local function PaintStealth()
-        local form, can, on = ns.Preview.GetState(), ns.Preview.CanStealth(), ns.Preview.GetStealthed()
-        stealthText:SetText(form == "caster" and (ns.SpellName(ns.SPELL.SHADOWMELD) or "Shadowmeld")
-            or form == "cat" and (ns.SpellName(ns.SPELL.PROWL) or "Prowl") or L["Stealth"])
-        stealthToggle:SetAlpha(can and 1 or 0.4)
-        stealthToggle.SetShade(on)
-        stealthText:SetTextColor(unpack((on or stealthHovered and can) and WHITE or GOLD))
-    end
-    stealthToggle:SetScript("OnEnter", function()
-        stealthHovered = true
-        PaintStealth()
-    end)
-    stealthToggle:SetScript("OnLeave", function()
-        stealthHovered = false
-        PaintStealth()
-    end)
-    stealthToggle:SetScript("OnClick", function()
-        if ns.Preview.CanStealth() then
-            ns.Preview.SetStealthed(not ns.Preview.GetStealthed())
-        end
-    end)
-    refreshers[#refreshers + 1] = PaintStealth
-
-    -- The two panes, under the HUD controls and the preview strip.
-    rotation.pageTop = PAD + hudHeight + PAD + previewPanel:GetHeight()
+    -- The two panes, under the HUD controls.
+    rotation.pageTop = PAD + hudHeight
     local tree = CreateFrame("Frame", nil, rotation.page)
     tree:SetPoint("TOPLEFT", PAD, -(rotation.pageTop + PAD))
     tree:SetWidth(TREE_WIDTH - PAD)
@@ -1397,16 +1302,14 @@ do
     detail:SetHeight(1)
 
     -- While the Rotation Frame is off, only its switch can be used (owner, 2026-10-09): as well as
-    -- FramePanel's sliders, the preview strip and both panes dim, and a blocker over them catches
-    -- the mouse.
+    -- FramePanel's sliders, both panes dim, and a blocker over them catches the mouse.
     local paneBlocker = ScrollBlocker(rotation.page, rotation.page:GetFrameLevel() + 40) -- under Reset...'s confirmation (+60)
-    paneBlocker:SetPoint("TOPLEFT", previewPanel, "TOPLEFT") -- the preview strip too
+    paneBlocker:SetPoint("TOPLEFT", tree, "TOPLEFT")
     paneBlocker:SetPoint("BOTTOMRIGHT", rotation.page, "BOTTOMRIGHT")
 
     refreshers[#refreshers + 1] = function()
         local on = ns.db.hudEnabled and true or false
         local alpha = on and 1 or 0.45
-        previewPanel:SetAlpha(alpha)
         tree:SetAlpha(alpha)
         detail:SetAlpha(alpha)
         paneBlocker:SetShown(not on)
@@ -1425,9 +1328,13 @@ do
     local treeY = -TREE_INSET
 
 
-    -- The zones: General (built here: the text defaults and the HUD's position), then ns.ZONES.
+    -- The zones: General (built here: the text defaults, while not hidden), then ns.ZONES.
     local generalZone = { id = "general", name = L["General"] }
-    local zones = { generalZone }
+    local generalElement = ns.GetElement("general")
+    local zones = {}
+    if not generalElement.hidden then
+        zones[1] = generalZone
+    end
     for _, zone in ipairs(ns.ZONES) do
         zones[#zones + 1] = { id = zone.id, name = zone.name, groups = zone.groups }
     end
@@ -1587,20 +1494,18 @@ do
         EndTab(tab)
     end
 
-    -- General: the text defaults other elements inherit (unless hidden), and Stealth Mode. On/off,
-    -- scale, opacity and position are the HUD controls above; Edit Mode just moves the HUD.
-    ZoneList(generalZone)
-    local generalElement = ns.GetElement("general")
+    -- General: the text defaults other elements inherit (unless hidden). On/off, scale, opacity and
+    -- position are the HUD controls above; Edit Mode just moves the HUD.
     if not generalElement.hidden then
+        ZoneList(generalZone)
         local textPage = AddRow(generalZone, generalElement.name, generalElement.glyph, "general")
         Section(L["Text"])
         Hint(L["Default font and outline. Elements can choose their own."])
         ElementControls(generalElement)
         paneButtons[#paneButtons + 1] = Button(L["Reset to defaults"], function() ns.ResetElement("general") end)
         EndTab(textPage)
+        generalZone.height = -listY
     end
-    ElementPage(ns.GetElement("stealth"), generalZone) -- Stealth Mode (Layout.lua)
-    generalZone.height = -listY
 
     -- Each zone's elements, group by group under the group's heading, by their `order` (e.g. the combo
     -- point they sit on), else as registered.
@@ -1652,7 +1557,7 @@ do
         ns.Preview.SetSelected(tab.elementId)
     end
 
-    rotation.subs.Select(generalZone.first)
+    rotation.subs.Select(zones[1].first)
 end
 
 -- Cooldown tab: frame controls, Icons and Abilities on one page -------------------------------------
@@ -2013,11 +1918,6 @@ window:SetScript("OnShow", function()
     UpdateCanvas()
     UpdatePreview()
 end)
-ns.Preview.onStateChanged = function() -- the "Preview as" control follows switches made elsewhere
-    if window:IsShown() then
-        Refresh()
-    end
-end
 ns.OnSettingsChanged(function()
     if window:IsShown() then
         Refresh()

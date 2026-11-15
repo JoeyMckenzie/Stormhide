@@ -1,5 +1,7 @@
 # Customization settings plan
 
+Catnip's plan, kept as history: it describes the Druid HUD (forms, stealth, Maul, Clearcasting, shift orbs). Stormhide's settings today are in [design.md](design.md) and [architecture.md](architecture.md); the Shaman skeleton (2026-11-14) removed the preview strip, the General zone's Stealth Mode page and every Druid element.
+
 Plan for letting players customize the HUD (opacity per element, text font and size, options such as mana as a value or a percent), with a preview mode that shows what's being changed. Started 2026-10-04 on the `ui-customization` branch. Update this file as pieces land, then fold the result into design.md and architecture.md.
 
 ## Status

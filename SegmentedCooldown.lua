@@ -1,5 +1,5 @@
 -- ns.CreateSegmentedCooldown(spec): runs a SegmentedArc.lua arc over a spell's cooldown. Used by
--- ShiftingPower.lua, GrowlArc.lua and CooldownRings.lua.
+-- CooldownRings.lua.
 --
 -- Since 2026-10-10 the game drives it (verified in combat with a probe, docs/api-research.md):
 -- isActive and isOnGCD stay readable in combat, and "isActive and isOnGCD ~= true" means the spell

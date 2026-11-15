@@ -44,17 +44,7 @@ local selectedId, listHoverId, mouseHoverId
 
 -- What the HUD shows while active: a sample state, not the game's. Each element with a `sample`
 -- function draws it (sample(state)), and sample(nil) when preview ends puts back the real state.
--- Stealth is a toggle over the form, not a state of its own: stealth mode's look (periwinkle,
--- smoke; ns.SetStealthPreview) over Cat Form (Prowl) or Caster (Shadowmeld). The form decides
--- what's shown, stealth only the look.
-Preview.STATES = { -- short: the settings window's button for it; in the owner's order
-    { value = "caster", text = L["Caster"], short = L["Caster"] }, -- shows a spell being cast, unless stealthed
-    { value = "bear", text = ns.SpellName(ns.SPELL.BEAR_FORM) or "Bear Form", short = L["Bear"] },
-    { value = "cat", text = ns.SpellName(ns.SPELL.CAT_FORM) or "Cat Form", short = L["Cat"] },
-}
-local state = "cat"
-local stealthed = false -- the Stealth toggle
-local CAN_STEALTH = { cat = true, caster = true } -- Bear Form can't (unverified for Shadowmeld)
+local STATE = "shaman"
 
 -- Everything we draw goes on a layer above the HUD's elements, at full strength whatever the HUD's
 -- opacity setting.
@@ -373,31 +363,13 @@ end)
 
 -- Samples ------------------------------------------------------------------------------------------
 
--- Draws `to` (a state, or nil for the real one) on every element. Stealth goes first, so samples
--- that differ while stealthed (no swing, no cast) see it.
+-- Draws `to` (a state, or nil for the real one) on every element.
 local function ApplySamples(to)
-    if to then
-        ns.SetStealthPreview(stealthed)
-    else
-        ns.SetStealthPreview(nil)
-    end
     for _, element in ipairs(ns.elements) do
         if element.sample then
             element.sample(to)
         end
     end
-end
-
--- The state and stealth matching what the player is in now, to start the preview from.
-local function CurrentState()
-    local powerType = UnitPowerType("player")
-    local form = "caster"
-    if ns.IsSecret(powerType) or powerType == Enum.PowerType.Energy then
-        form = "cat"
-    elseif powerType == Enum.PowerType.Rage then
-        form = "bear"
-    end
-    return form, ns.IsStealthMode() and CAN_STEALTH[form] or false
 end
 
 -- On and off ---------------------------------------------------------------------------------------
@@ -411,40 +383,16 @@ end
 -- From the events: PLAYER_REGEN_DISABLED fires just before InCombatLockdown() turns true.
 local inCombat = false
 
--- Switches to `to`, stealthed or not (nil: as it was; always off in a form that can't stealth),
--- drawn now if active, and tells the settings window (Preview.onStateChanged).
-local function SetState(to, stealth)
-    if stealth == nil then
-        stealth = stealthed
-    end
-    stealth = stealth and CAN_STEALTH[to] or false
-    if to == state and stealth == stealthed then
-        return
-    end
-    state, stealthed = to, stealth
-    if active then
-        ApplySamples(state)
-    end
-    if Preview.onStateChanged then
-        Preview.onStateChanged()
-    end
-end
-
--- The form and stealth shown change only from the settings window's buttons (or the game's, when
--- the preview starts): opening a page doesn't switch them (owner, 2026-10-08).
 local function Update()
     local now = wanted and not inCombat and not InCombatLockdown() and not Editing()
     if now == active then
         return
     end
-    if now then
-        SetState(CurrentState()) -- before turning on, so it's read from the game
-    end
     active = now
     if not now then
         SetMouseHover(nil)
     end
-    ApplySamples(now and state or nil)
+    ApplySamples(now and STATE or nil)
     layer:SetShown(now)
     if now then
         Refresh()
@@ -484,28 +432,6 @@ function Preview.SetSelected(id)
     if active then
         Refresh()
     end
-end
-
--- The sample state, and choosing one (the "Preview as" control).
-function Preview.GetState()
-    return state
-end
-
-function Preview.SetState(to)
-    SetState(to)
-end
-
--- The Stealth toggle: whether it's on, whether the shown form can stealth, and switching it.
-function Preview.GetStealthed()
-    return stealthed
-end
-
-function Preview.CanStealth()
-    return CAN_STEALTH[state] or false
-end
-
-function Preview.SetStealthed(on)
-    SetState(state, on and true or false)
 end
 
 -- The element whose row the mouse is over in the settings tree, or nil.

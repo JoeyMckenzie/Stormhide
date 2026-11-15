@@ -5,7 +5,7 @@
 -- frames (type "Frame", no template) then time every script they run (OnEvent per event name,
 -- OnUpdate, ...), and its C_Timer callbacks are timed too (Cooldowns.lua's updates run in them).
 -- While not measuring, a wrapper only checks a flag. Times are inclusive: a handler that calls into
--- another module (a callback like ns.OnStealthChanged) counts that time as its own.
+-- another module (a callback like ns.OnSettingsChanged) counts that time as its own.
 -- Not covered: frames with a template or of other types (Cooldown, StatusBar, AuraContainer: their
 -- few scripts are light), and Blizzard's work on our behalf (drawing, AuraContainer, swipes).
 local addonName, ns = ...

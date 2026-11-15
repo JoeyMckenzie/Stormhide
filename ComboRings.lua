@@ -1,7 +1,6 @@
 -- The combo rings: a slot around each of the five combo points, showing the ability the player
 -- picks for it in the settings (elements combo.ring1 to combo.ring5, option "spell"): a short
--- cooldown (CooldownRings.lua) or a DoT on the target (DotRings.lua). An ability sits in at most
--- one slot: picking it for one clears it from the other.
+-- cooldown (CooldownRings.lua). An ability sits in at most one slot: picking it for one clears it from the other.
 --
 -- Those files add their abilities with ns.AddComboRingSpell(entry):
 --   key            saved in the settings
@@ -22,10 +21,6 @@ local L = ns.L
 local COUNT = 5
 local NONE = "none"
 local LEVEL = 5 -- the rings' frame level above their slot's gate: over the dots
-
--- The old elements, one per ability (until 2026-10-09), and the slot each sat in: their Opacity
--- moves to that slot.
-local MIGRATE = { ["combo.ff"] = 1, ["combo.pb"] = 3, ["combo.rake"] = 4, ["combo.rip"] = 5 }
 
 local NONE_GLYPH = { kind = "ring", color = { 0.4, 0.38, 0.34 } }
 
@@ -81,7 +76,7 @@ local function Picked(slot)
 end
 
 local function Sampling()
-    return sampleState == "cat" or sampleState == "bear"
+    return sampleState ~= nil
 end
 
 -- Puts every ability's ring, and its preview sample, in the slot the settings say (if two slots
@@ -137,8 +132,8 @@ end
 
 for index = 1, COUNT do
     local slot = { index = index, id = "combo.ring" .. index }
-    -- Gates (ns.ComboRingGate) carry the Opacity setting: the real rings go in comboLive (hidden with
-    -- the combo dots outside Cat and Bear Form), preview mode's samples in comboSample.
+    -- Gates (ns.ComboRingGate) carry the Opacity setting: the real rings go in comboLive, preview
+    -- mode's samples in comboSample.
     slot.gate = ns.ComboRingGate(ns.comboLive)
     slot.sampleGate = ns.ComboRingGate(ns.comboSample)
     slot.spellOption = { key = "spell", type = "choice", label = L["Shows"], values = choices, default = NONE }
@@ -211,20 +206,6 @@ for index = 1, COUNT do
 end
 
 ns.OnLoad(function()
-    local saved = ns.db.elements
-    for old, index in pairs(MIGRATE) do
-        if saved[old] then
-            local id = "combo.ring" .. index
-            saved[id] = saved[id] or {}
-            if saved[id].opacity == nil then
-                saved[id].opacity = saved[old].opacity
-            end
-            if next(saved[id]) == nil then
-                saved[id] = nil
-            end
-            saved[old] = nil
-        end
-    end
     for _, slot in ipairs(slots) do -- Elements.lua applied them before this ran
         ns.GetElement(slot.id).apply(function(key) return ns.ElementOption(slot.id, key) end)
     end

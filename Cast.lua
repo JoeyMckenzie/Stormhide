@@ -51,7 +51,7 @@ local nameText = info:CreateFontString(nil, "OVERLAY")
 nameText:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
 nameText:SetPoint("TOP", timeText, "BOTTOM", 0, -2)
 
--- Registered for its preview sample (the cast loop, below); its setting is "Swing/Cast Timer".
+-- Registered for its preview sample; its setting is "Swing/Cast Timer".
 ns.RegisterElement({
     id = "text.castTime",
     zone = "text",
@@ -84,8 +84,6 @@ ns.RegisterElement({
         { key = "size", type = "slider", label = L["Timer size"], min = 6, max = 40, step = 1, format = "%.0f", default = 14 },
         { key = "nameSize", type = "slider", label = L["Spell name size"], min = 6, max = 40, step = 1, format = "%.0f",
             default = 12 },
-        -- Read by Swing.lua: the swing time takes the Maul queued colour while Maul is queued.
-        { key = "matchMaul", type = "checkbox", label = L["Match Maul color when queued"], default = true },
     },
     apply = function(get)
         local font, outline = ns.ElementOption("general", "font"), ns.ElementOption("general", "outline")
@@ -123,29 +121,8 @@ local function FormatFromObject()
 end
 
 local sampling = false -- preview mode (Preview.lua) is showing a sample state; real casts wait
-local SAMPLE_CAST = 2.5 -- the sample cast's length, in seconds
-local sampleStart -- the looping sample cast's start, while it shows
-
--- The sample cast: fills the ring and counts up over SAMPLE_CAST, then starts again.
-local function StartSampleCast()
-    sampleStart = GetTime()
-    RunRing(ns.Duration(sampleStart, SAMPLE_CAST), false)
-end
-
-local function DrawSample()
-    local elapsed = GetTime() - sampleStart
-    if elapsed >= SAMPLE_CAST then
-        StartSampleCast()
-        elapsed = 0
-    end
-    timeText:SetText(string.format("%.1f / %.1fs", elapsed, SAMPLE_CAST))
-end
-
 info:SetScript("OnUpdate", function()
     if sampling then
-        if sampleStart then
-            DrawSample()
-        end
         return
     end
     if durationObject then
@@ -277,29 +254,16 @@ events:SetScript("OnEvent", function(_, event)
     end
 end)
 
--- Preview mode's sample (Preview.lua's "Caster" state, which shows a spell being cast, unless
--- stealthed): a cast looping on the ring and text (info's OnUpdate); in other states no cast. nil
--- hands back to the real cast, if any.
-local SAMPLE_NAME = ns.SpellName(ns.SPELL.REGROWTH) or "Regrowth"
-
 local function Sample(state)
     sampling = state ~= nil
-    sampleStart = nil
     if not sampling then
         Refresh("preview ended") -- redraws the real state, swing ring alpha included
         return
     end
-    local casting = state == "caster" and not ns.IsStealthMode() -- a cast would break Shadowmeld
-    ring:SetShown(casting)
-    info:SetShown(casting)
+    ring:Hide()
+    info:Hide()
     if ns.swingRing then
-        ns.swingRing:SetAlpha(casting and 0 or 1)
-    end
-    if casting then
-        SetRingColor(castColor)
-        StartSampleCast()
-        nameText:SetText(SAMPLE_NAME)
-        DrawSample()
+        ns.swingRing:SetAlpha(1)
     end
 end
 ns.GetElement("text.castTime").sample = Sample
@@ -315,7 +279,7 @@ ns.RegisterElement({
     id = "swing.cast",
     zone = "swing",
     name = L["Cast Timer"],
-    order = 2, -- after Swing Timer, before Stealth smoke
+    order = 2, -- after Swing Timer
     glyph = { kind = "ring", color = { 0.91, 0.72, 0.19 } },
     hit = { kind = "ring", inner = ns.SWING_BAND.inner, outer = ns.SWING_BAND.outer, visible = ns.CastBarShown },
     options = {

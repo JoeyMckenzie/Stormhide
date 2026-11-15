@@ -1,7 +1,6 @@
 -- ns.CreateSegmentedArc(options): an arc (or full ring) of segments that fills from one end to the
 -- other over a duration (or starts full and empties), then flashes and fades out. Used by
--- ShiftingPower.lua, GrowlArc.lua, CooldownRings.lua and OmenRing.lua; SegmentedCooldown.lua times
--- the cooldown ones.
+-- CooldownRings.lua; SegmentedCooldown.lua times the cooldown ones.
 --
 -- Since 2026-10-10 the arc is a radial StatusBar (RadialBar.lua) showing coloured art that stays put
 -- (its colour is baked by angle, its segments and gaps drawn in). Blizzard times it from a duration
@@ -24,8 +23,7 @@
 -- arc.SetDuration(duration) changes the timing of a running arc; arc.Finish() ends it (full, or
 -- empty when draining), flashes and fades; arc.Hide(); arc.IsFading(); arc.SetArt(art) swaps the
 -- art, even mid-run (ComboRings.lua's segment shapes). arc.onShownChanged(shown), if set, is called
--- when the arc itself shows or hides (its fade-out included), whatever its parents are doing:
--- GrowlArc.lua decides which of two arcs shows from it.
+-- when the arc itself shows or hides (its fade-out included), whatever its parents are doing.
 local addonName, ns = ...
 local CreateFrame = ns.Profiled("SegmentedArc") -- timed by /stormhide perf (Profiler.lua)
 

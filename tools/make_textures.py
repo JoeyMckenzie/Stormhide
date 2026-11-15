@@ -353,6 +353,7 @@ PRIMAL_BITE_STOPS = [(0.50, 0.42, 0.32), (0.75, 0.68, 0.55), (0.92, 0.88, 0.78),
 # Omen of Clarity ICD (OmenRing.lua, dot 2): the talent's icon (spell_nature_crystalball, the
 # owner's pick over Clearcasting's blue), its ball sampled: deep sea green through jade to pale mint.
 OMEN_STOPS = [(0.10, 0.40, 0.32), (0.28, 0.68, 0.50), (0.52, 0.86, 0.64), (0.88, 0.98, 0.92)]
+EARTH_SHOCK_STOPS = [(0.36, 0.22, 0.10), (0.70, 0.44, 0.18), (0.90, 0.70, 0.34), (0.98, 0.90, 0.68)]
 
 
 # DoT rings (DotRings.lua): Rake and Rip share one red, sampled by eye from their icons, dark
@@ -588,6 +589,8 @@ TEXTURES = {
     "ring_faerie_circular": (128, coloured_ring(128, 16, FAERIE_STOPS, 6)),
     "ring_primal_bite_circular": (128, coloured_ring(128, 16, PRIMAL_BITE_STOPS, 6)),
     "ring_omen_circular": (128, coloured_ring(128, 16, OMEN_STOPS, 5)),
+    "ring_earth_shock_angular": (128, coloured_ring(128, 16, EARTH_SHOCK_STOPS, 6, DOT_GAP, DOT_POINT)),
+    "ring_earth_shock_circular": (128, coloured_ring(128, 16, EARTH_SHOCK_STOPS, 6)),
     "tick_dot": (64, tick_bar(64, DOT_STOPS[1:])),            # DotRings.lua still-up tick: red to orange-red up it
     "ring_rake": (128, coloured_ring(128, 16, DOT_STOPS, 3, DOT_GAP, DOT_POINT)),  # Rake DoT ring: 3 segments (9s, 3s ticks), pointed inside
     "ring_rip_segments": (128, coloured_ring(128, 16, DOT_STOPS, 6, DOT_GAP, DOT_POINT)),  # Rip DoT ring: 6 segments (12s, 2s ticks), pointed inside

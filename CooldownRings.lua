@@ -1,8 +1,7 @@
--- Short cooldowns as segmented rings around the combo points: Faerie Fire and Primal Bite, each in
--- whichever combo ring slot the player picks for it (ComboRings.lua; by default dots 1 and 3). Each
--- ring starts full when the cooldown starts and empties clockwise from 12 o'clock over it, leaving
--- nothing behind; when ready it's simply gone (no flash). (Segments pulsed as they emptied until
--- 2026-10-10.) Hidden with the combo dots outside Cat and Bear Form.
+-- Short cooldowns as segmented rings around the combo points, each in whichever combo ring slot
+-- the player picks for it (ComboRings.lua). Each ring starts full when the cooldown starts and
+-- empties clockwise from 12 o'clock over it, leaving nothing behind; when ready it's simply gone
+-- (no flash). (Segments pulsed as they emptied until 2026-10-10.)
 -- Each is a SegmentedArc.lua ring (a radial StatusBar) timed by SegmentedCooldown.lua (the game's
 -- own cooldown), coloured from its spell's icon (make_textures.py). Its segments are Circular by
 -- default or Angular, the player's pick (ComboRings.lua), both drawn into the art
@@ -11,40 +10,20 @@
 local addonName, ns = ...
 local L = ns.L
 
-local RING_SIZE = ns.COMBO_DOT_SIZE + 8 -- same as DotRings.lua; the ring textures have ring_rip's band
-
-local function InFeralForm()
-    local powerType = UnitPowerType("player")
-    return powerType == Enum.PowerType.Energy or powerType == Enum.PowerType.Rage
-end
+local RING_SIZE = ns.COMBO_DOT_SIZE + 8 -- the ring textures have ring_rip's band
 
 local RINGS = {
     {
-        key = "ff", -- saved in the combo ring settings
-        label = "Faerie Fire", -- debug output
-        choice = L["Faerie Fire Cooldown"], -- the combo ring dropdown
-        order = 1, -- in the settings dropdown
-        dot = 1, -- its slot by default
-        art = "ring_faerie",
-        color = { 0.69, 0.31, 0.82 }, -- its glyph in the settings list
-        -- In Cat and Bear Form the spell may become Faerie Fire (Feral); in Forever its casts seem
-        -- to keep the plain name. The caster one stands in for "known" either way.
-        spells = { ns.SPELL.FAERIE_FIRE_FERAL, ns.SPELL.FAERIE_FIRE },
-        castAllowed = InFeralForm, -- the caster version has no cooldown
-        defaultLength = 6,
-        command = "ff",
-    },
-    {
-        key = "pb",
-        label = "Primal Bite",
-        choice = L["Primal Bite Cooldown"],
-        order = 2,
+        key = "es",
+        label = "Earth Shock",
+        choice = L["Earth Shock Cooldown"],
+        order = 1,
         dot = 3,
-        art = "ring_primal_bite",
-        color = { 0.91, 0.86, 0.75 },
-        spells = { ns.SPELL.PRIMAL_BITE },
-        defaultLength = 6, -- for the preview and the sample
-        command = "pb",
+        art = "ring_earth_shock",
+        color = { 0.80, 0.56, 0.24 },
+        spells = { ns.SPELL.EARTH_SHOCK },
+        defaultLength = 6,
+        command = "es",
     },
 }
 
@@ -69,9 +48,8 @@ for _, ring in ipairs(RINGS) do
     ns.CreateSegmentedCooldown({
         label = ring.label,
         spells = ring.spells,
-        castAllowed = ring.castAllowed,
         defaultLength = ring.defaultLength,
-        command = ring.command, -- /stormhide <command> [seconds], in Cat or Bear Form (shows only while in a slot)
+        command = ring.command, -- /stormhide <command> [seconds] (shows only while in a slot)
         arc = arc,
     })
 

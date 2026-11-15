@@ -1,5 +1,5 @@
 -- Stormhide's entry in Blizzard's settings (Options → AddOns). Every setting lives in Stormhide's own
--- window, so the page only points there: the druid icon, name and version, a button that closes
+-- window, so the page only points there: the class icon, name and version, a button that closes
 -- Blizzard's settings and opens ours, and the /stormhide command. Same idea as Leatrix Plus's page.
 local addonName, ns = ...
 local L = ns.L
@@ -8,14 +8,14 @@ if not (Settings and Settings.RegisterCanvasLayoutCategory and Settings.Register
     return
 end
 
-local DRUID_ICON = 625999 -- Interface\Icons\ClassIcon_Druid, as the settings window's portrait
+local CLASS_ICON = "Interface\\Icons\\ClassIcon_Shaman" -- as the settings window's portrait
 
 local page = CreateFrame("Frame")
 
 local icon = page:CreateTexture(nil, "ARTWORK")
 icon:SetSize(96, 96)
 icon:SetPoint("TOP", 0, -64)
-icon:SetTexture(DRUID_ICON)
+icon:SetTexture(CLASS_ICON)
 
 local title = page:CreateFontString(nil, "ARTWORK", "GameFontNormalHuge")
 title:SetPoint("TOP", icon, "BOTTOM", 0, -20)

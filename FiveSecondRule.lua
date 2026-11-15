@@ -1,17 +1,13 @@
 -- Five-second rule: mana only regenerates once 5 seconds have passed since mana was last spent.
--- Mana keeps its own clock in every form, so in all of them a deep indigo ring over the resource
--- circle's border shows it: a mana spend fills it, then it opens at 12 o'clock and the two ends
+-- A deep indigo ring over the resource circle's border shows it: a mana spend fills it, then it opens at 12 o'clock and the two ends
 -- retreat down both sides, meeting at 6 o'clock as the 5 seconds run out. Empty while
 -- regenerating (including during a cast, since mana is only spent when it lands).
 --
--- Only casts that really spend mana count: not ones with no mana cost (skinning), nor ones made
--- free by Clearcasting (judged by whether the cast used the buff up). Cat and Bear abilities cost
--- energy or rage, so they don't count; shapeshifting costs mana, so it does. Our casts' spell IDs
--- and spell costs are readable in combat and the timer is our own clock; Clearcasting is the
--- exception (see ns.IsClearcasting).
+-- Only casts that really spend mana count: not ones with no mana cost (skinning). Our casts' spell
+-- IDs and spell costs are readable in combat and the timer is our own clock.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame, C_Timer = ns.Profiled("FiveSecondRule") -- timed by /stormhide perf (Profiler.lua)
+local CreateFrame = ns.Profiled("FiveSecondRule") -- timed by /stormhide perf (Profiler.lua)
 
 local RULE = 5
 -- Deep indigo, well darker than the mana fill's bright azure; the texture adds tube shading.
@@ -56,33 +52,8 @@ local function SetFill(fill)
 end
 
 local lastSpend -- GetTime() of the last mana spend
-local active = false -- inside the 5 seconds, as last told to the callbacks
-local callbacks = {}
 
--- Whether mana was spent in the last 5 seconds (so it isn't regenerating). Our own clock, so
--- readable in combat.
-function ns.InFiveSecondRule()
-    return lastSpend ~= nil and GetTime() - lastSpend < RULE
-end
-
--- fn(active) runs whenever the rule starts (a mana spend) or runs out.
-function ns.OnFiveSecondRuleChanged(fn)
-    callbacks[#callbacks + 1] = fn
-end
-
-local function Notify()
-    local now = ns.InFiveSecondRule()
-    if now == active then
-        return
-    end
-    active = now
-    for _, fn in ipairs(callbacks) do
-        fn(now)
-    end
-end
-
--- Preview mode (below): a made-up spend every SAMPLE_EVERY seconds in Caster, else none. Only
--- the ring shows it; ns.InFiveSecondRule and its callbacks keep the real state.
+-- Preview mode (below): a made-up spend every SAMPLE_EVERY seconds.
 local SAMPLE_EVERY = RULE + 1.5
 local sampling, sampleSpend = false, nil
 
@@ -103,7 +74,7 @@ local function Progress()
 end
 
 -- The ring's fill: full right after a spend, empty once regenerating. Driven each frame only while
--- it has something to draw (after a spend, or the looping Caster sample); once empty it stops until
+-- it has something to draw (after a spend, or the looping sample); once empty it stops until
 -- the next spend wakes it (/stormhide perf, 2026-10-10: it ran every frame, forever).
 local driver = CreateFrame("Frame")
 
@@ -138,7 +109,7 @@ ns.RegisterElement({
     end,
     sample = function(state)
         sampling = state ~= nil
-        sampleSpend = state == "caster" and GetTime() or nil
+        sampleSpend = sampling and GetTime() or nil
         Wake() -- draws the sample, or puts back the real state
     end,
 })
@@ -159,63 +130,21 @@ local function CostsMana(spellID)
     return not ok or result
 end
 
-local function IsClearcasting()
-    return ns.IsClearcasting and ns.IsClearcasting()
-end
-
 local function Spent(spellID, at, reason)
     lastSpend = math.max(lastSpend or 0, at)
     Wake()
     local name = not ns.IsSecret(spellID) and C_Spell.GetSpellName(spellID) or spellID
     ns.Debug("5s rule:", name, "spent mana, ring reset (" .. reason .. ")")
-    Notify()
-    -- Each spend schedules its own check; only the one after the latest spend finds the rule over.
-    local remaining = lastSpend + RULE - GetTime()
-    C_Timer.After(math.max(remaining, 0) + 0.05, Notify)
-end
-
--- Whether Clearcasting was up when each cast was sent, keyed by spell ID (castGUID may be
--- secret). Only damage and healing spells use it up (not shapeshifts, Wrath or buffs), so rather
--- than listing those, a cast sent with it up is free only if it's gone once the cast lands.
--- If Clearcasting can't be read (in combat, untracked by the Cooldown Manager), assume it's down.
-local ccWhenSent = {}
-
-local function OnSent(spellID)
-    if spellID and not ns.IsSecret(spellID) then
-        ccWhenSent[spellID] = IsClearcasting()
-    end
 end
 
 local function OnSucceeded(spellID)
-    local hadCC = spellID and not ns.IsSecret(spellID) and ccWhenSent[spellID]
-    if spellID and not ns.IsSecret(spellID) then
-        ccWhenSent[spellID] = nil
+    if CostsMana(spellID) then
+        Spent(spellID, GetTime(), "costs mana")
     end
-    if not CostsMana(spellID) then
-        return
-    end
-    local castAt = GetTime()
-    if not hadCC then
-        Spent(spellID, castAt, "costs mana")
-        return
-    end
-    C_Timer.After(0.2, function() -- give the buff time to drop
-        if IsClearcasting() == false then
-            local name = not ns.IsSecret(spellID) and C_Spell.GetSpellName(spellID) or spellID
-            ns.Debug("5s rule:", name, "no reset (used Clearcasting)")
-        else
-            Spent(spellID, castAt, "Clearcasting not used")
-        end
-    end)
 end
 
 local events = CreateFrame("Frame")
-events:RegisterUnitEvent("UNIT_SPELLCAST_SENT", "player")
 events:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
-events:SetScript("OnEvent", function(_, event, ...)
-    if event == "UNIT_SPELLCAST_SENT" then
-        OnSent((select(4, ...))) -- unit, target, castGUID, spellID
-    else
-        OnSucceeded((select(3, ...))) -- unit, castGUID, spellID
-    end
+events:SetScript("OnEvent", function(_, _, ...)
+    OnSucceeded((select(3, ...))) -- unit, castGUID, spellID
 end)

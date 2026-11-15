@@ -1,17 +1,14 @@
--- The big middle circle: energy / rage / mana, filling from the bottom, with the raw value in the middle.
+-- The big middle circle: mana, filling from the bottom, with the raw value in the middle.
 local addonName, ns = ...
 local L = ns.L
 local CreateFrame = ns.Profiled("Resource") -- timed by /stormhide perf (Profiler.lua)
 
 local SIZE = ns.RESOURCE_SIZE
--- Fill textures carry their own colour (the Forever energy bar's gradient; see make_textures.py), so
+-- Fill textures carry their own colour (the Forever mana bar's gradient; see make_textures.py), so
 -- they're drawn untinted. Anything else (or a secret power type) gets a flat grey.
 local POWER_TEXTURES = {
-    [Enum.PowerType.Energy] = ns.MEDIA .. "fill_energy",
-    [Enum.PowerType.Rage] = ns.MEDIA .. "fill_rage",
     [Enum.PowerType.Mana] = ns.MEDIA .. "fill_mana",
 }
-local STEALTH_ENERGY_TEXTURE = ns.MEDIA .. "fill_energy_prowl" -- periwinkle, in stealth mode (Stealth.lua)
 local FLAT_TEXTURE ="Interface\\Buttons\\WHITE8X8"
 local DEFAULT_COLOR = { 0.7, 0.7, 0.7 }
 local SMOOTH = Enum.StatusBarInterpolation and Enum.StatusBarInterpolation.ExponentialEaseOut
@@ -29,7 +26,7 @@ backdrop:SetVertexColor(0, 0, 0, 0.4) -- light enough for the GCD shading to sho
 local bar = CreateFrame("StatusBar", nil, hud)
 bar:SetSize(SIZE, SIZE)
 bar:SetPoint("CENTER")
-bar:SetFrameLevel(hud:GetFrameLevel() + 2) -- leaves +1 for the Enrage tint behind it (Enrage.lua)
+bar:SetFrameLevel(hud:GetFrameLevel() + 2) -- leaves +1 for the mana prediction bands behind it
 bar:SetOrientation("VERTICAL")
 local mask = bar:CreateMaskTexture()
 mask:SetTexture(ns.MEDIA .. "circle_feather", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
@@ -38,8 +35,7 @@ mask:SetAllPoints(bar)
 -- Swaps the fill texture, only when it changes. If the StatusBar hands back a new texture object,
 -- the mask goes on that one too.
 local currentFile, maskedTexture
-local fillAlpha = 1 -- the fill's own alpha, lowered in stealth mode
-local fillOpacity = 1 -- the Resource circle's "Fill opacity" setting; multiplies fillAlpha
+local fillOpacity = 1 -- the Resource circle's "Fill opacity" setting
 local function SetFill(file, r, g, b)
     if file ~= currentFile then
         bar:SetStatusBarTexture(file)
@@ -49,7 +45,7 @@ local function SetFill(file, r, g, b)
             texture:AddMaskTexture(mask)
             maskedTexture = texture
         end
-        texture:SetAlpha(fillAlpha * fillOpacity)
+        texture:SetAlpha(fillOpacity)
     end
     bar:SetStatusBarColor(r, g, b)
 end
@@ -70,81 +66,7 @@ textLayer:SetFrameLevel(bar:GetFrameLevel() + 5)
 local text = textLayer:CreateFontString(nil, "OVERLAY")
 text:SetFont(STANDARD_TEXT_FONT, 20, "OUTLINE") -- until the saved font is applied (the element below)
 text:SetPoint("CENTER")
-
-local function StyleText()
-    if ns.IsStealthMode() then
-        text:SetTextColor(0.9, 0.93, 0.98, 0.85)
-    else
-        text:SetTextColor(1, 1, 1, 1)
-    end
-end
-StyleText()
-
--- Stealth mode crossfade: when the energy fill changes colour (Stealth.lua), a copy of the old
--- colour sits over the new fill and fades out. Like ManaPrediction.lua's bands, it's a clip frame
--- from the bar's bottom up to the fill's top edge, holding full-size circle art, so it covers just
--- the filled part and follows the fill while it fades. It sits over the border for that moment.
--- The fill itself (not the border or number) also dims to STEALTH_FILL_ALPHA over the same time.
-local FADE_TIME = 0.35
-local STEALTH_FILL_ALPHA = 0.7
-local ghost = CreateFrame("Frame", nil, hud)
-ghost:SetFrameLevel(bar:GetFrameLevel() + 1)
-ghost:SetClipsChildren(true)
-ghost:Hide()
-local ghostMask = ghost:CreateMaskTexture()
-ghostMask:SetTexture(ns.MEDIA .. "circle_feather", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-ghostMask:SetSize(SIZE, SIZE)
-ghostMask:SetPoint("CENTER", hud)
-local ghostFill = ghost:CreateTexture(nil, "ARTWORK")
-ghostFill:SetSize(SIZE, SIZE)
-ghostFill:SetPoint("CENTER", hud)
-ghostFill:AddMaskTexture(ghostMask)
-local fade = ghost:CreateAnimationGroup()
-local fadeAlpha = fade:CreateAnimation("Alpha")
-fadeAlpha:SetFromAlpha(1)
-fadeAlpha:SetToAlpha(0)
-fadeAlpha:SetDuration(FADE_TIME)
-fadeAlpha:SetSmoothing("OUT")
-fade:SetScript("OnFinished", function()
-    ghost:Hide()
-end)
-
-local function FadeFrom(file)
-    local top = bar:GetStatusBarTexture()
-    local ok, err = pcall(function()
-        ghost:ClearAllPoints()
-        ghost:SetPoint("BOTTOMLEFT", bar, "BOTTOMLEFT")
-        ghost:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT")
-        ghost:SetPoint("TOP", top, "TOP")
-    end)
-    if not ok then
-        ns.Debug("stealth fade: can't anchor:", err)
-        return
-    end
-    ghostFill:SetTexture(file)
-    fadeAlpha:SetFromAlpha(fillAlpha * fillOpacity) -- starts as bright as the fill it covers
-    fade:Stop()
-    ghost:Show()
-    fade:Play()
-end
-
-local alphaFrom, alphaTo, alphaStart = 1, 1, 0
-local alphaDriver = CreateFrame("Frame")
-alphaDriver:Hide()
-alphaDriver:SetScript("OnUpdate", function(self)
-    local t = math.min(1, (GetTime() - alphaStart) / FADE_TIME)
-    local eased = 1 - (1 - t) ^ 2 -- ease out, like the crossfade
-    fillAlpha = alphaFrom + (alphaTo - alphaFrom) * eased
-    bar:GetStatusBarTexture():SetAlpha(fillAlpha * fillOpacity)
-    if t >= 1 then
-        self:Hide()
-    end
-end)
-
-local function FadeFillAlpha(to)
-    alphaFrom, alphaTo, alphaStart = fillAlpha, to, GetTime()
-    alphaDriver:Show()
-end
+text:SetTextColor(1, 1, 1, 1)
 
 -- Mana shows as a percentage. Mana is secret in combat, so we can't divide it ourselves:
 -- UnitPowerPercent works it out engine-side, and the ScaleTo100 curve makes it 0-100.
@@ -182,7 +104,7 @@ end
 -- snap: also jump the fill to the current value, skipping the smoothing (for when the range
 -- returns to normal in the same moment the mana is spent, so the fill doesn't dip and recover).
 local sample -- preview mode's sample { powerType, value, max } (below), shown instead of the real power
-ns.SAMPLE_MANA = 0.8 -- Caster's sample mana, as a fraction of max (ManaPrediction.lua places its band by it)
+local SAMPLE_MANA = 0.8
 
 -- Whether the circle shows preview mode's sample, not the real power (ManaPrediction.lua hides
 -- its bands then).
@@ -214,10 +136,6 @@ local function Update()
     local powerType = sample and sample.powerType or UnitPowerType("player")
     local knownType = not ns.IsSecret(powerType)
     local file = knownType and POWER_TEXTURES[powerType]
-    -- Stealthed, energy (Prowl) and mana (Shadowmeld in Caster) both turn periwinkle.
-    if file and powerType ~= Enum.PowerType.Rage and ns.IsStealthMode() then
-        file = STEALTH_ENERGY_TEXTURE
-    end
     if file then
         SetFill(file, 1, 1, 1)
     else
@@ -226,10 +144,7 @@ local function Update()
 
     if sample then
         bar:SetMinMaxValues(0, sample.max)
-        -- Caster's sample shows a cast's cost taken off the fill, if the prediction is on
-        -- (ManaPrediction.lua draws its band over the gap); the number keeps the full value.
-        local spend = sample.powerType == Enum.PowerType.Mana and ns.SampleManaSpend and ns.SampleManaSpend() or 0
-        bar:SetValue(sample.value - spend * sample.max, SMOOTH)
+        bar:SetValue(sample.value, SMOOTH)
         text:SetText(SampleText())
         if ns.onResourceUpdate then -- hides the mana prediction bands (ns.IsResourceSampled)
             ns.onResourceUpdate()
@@ -246,8 +161,6 @@ local function Update()
         ns.onResourceUpdate()
     end
 end
-
-ns.RefreshResource = Update -- for ManaPrediction.lua's settings, which change the Caster sample
 
 ns.OnLoad(function()
     ns.Debug("mana as percent:", CAN_SHOW_PERCENT, "| UnitPowerPercent:", UnitPowerPercent ~= nil,
@@ -273,24 +186,20 @@ ns.RegisterElement({
     },
     apply = function(get)
         fillOpacity = get("fillOpacity") / 100
-        bar:GetStatusBarTexture():SetAlpha(fillAlpha * fillOpacity)
+        bar:GetStatusBarTexture():SetAlpha(fillOpacity)
         backdrop:SetVertexColor(0, 0, 0, get("backgroundOpacity") / 100)
         border:SetVertexColor(0, 0, 0, get("borderOpacity") / 100)
     end,
-    -- Preview mode: a fixed fill per state (Prowl's periwinkle comes from the stealth preview), or
-    -- back to the real power (nil). Max mana is the real one when readable, so "Value" looks right.
+    -- Preview mode: a fixed fill, or back to the real power (nil). Max mana is the real one when
+    -- readable, so "Value" looks right.
     sample = function(state)
         local mana = Enum.PowerType.Mana
-        if state == "caster" then
+        if state then
             local max = UnitPowerMax("player", mana)
             if ns.IsSecret(max) or not max or max <= 0 then
                 max = 5000
             end
-            sample = { powerType = mana, value = math.floor(max * ns.SAMPLE_MANA), max = max }
-        elseif state == "bear" then
-            sample = { powerType = Enum.PowerType.Rage, value = 45, max = 100 }
-        elseif state then -- cat
-            sample = { powerType = Enum.PowerType.Energy, value = 70, max = 100 }
+            sample = { powerType = mana, value = math.floor(max * SAMPLE_MANA), max = max }
         else
             sample = nil
             SetRange(UnitPowerType("player")) -- puts back the mana prediction's offset, if any
@@ -326,17 +235,3 @@ events:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 events:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 events:RegisterUnitEvent("UNIT_DISPLAYPOWER", "player")
 events:SetScript("OnEvent", Update)
-
--- The fills that crossfade into or out of stealth's periwinkle.
-local STEALTH_FADE_FILES = { [POWER_TEXTURES[Enum.PowerType.Energy]] = true,
-    [POWER_TEXTURES[Enum.PowerType.Mana]] = true, [STEALTH_ENERGY_TEXTURE] = true }
-
-ns.OnStealthChanged(function(stealthed)
-    StyleText()
-    local before = currentFile
-    Update()
-    if before ~= currentFile and STEALTH_FADE_FILES[before] then
-        FadeFrom(before)
-    end
-    FadeFillAlpha(stealthed and STEALTH_FILL_ALPHA or 1)
-end)
