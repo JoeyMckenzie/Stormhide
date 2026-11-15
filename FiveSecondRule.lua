@@ -11,7 +11,7 @@
 -- exception (see ns.IsClearcasting).
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame, C_Timer = ns.Profiled("FiveSecondRule") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame, C_Timer = ns.Profiled("FiveSecondRule") -- timed by /stormhide perf (Profiler.lua)
 
 local RULE = 5
 -- Deep indigo, well darker than the mana fill's bright azure; the texture adds tube shading.
@@ -104,7 +104,7 @@ end
 
 -- The ring's fill: full right after a spend, empty once regenerating. Driven each frame only while
 -- it has something to draw (after a spend, or the looping Caster sample); once empty it stops until
--- the next spend wakes it (/catnip perf, 2026-10-10: it ran every frame, forever).
+-- the next spend wakes it (/stormhide perf, 2026-10-10: it ran every frame, forever).
 local driver = CreateFrame("Frame")
 
 local function Update()

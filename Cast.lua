@@ -12,7 +12,7 @@
 -- which needed the cast's progress as a number and fell back to the swipe when it was secret.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame, C_Timer = ns.Profiled("Cast") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame, C_Timer = ns.Profiled("Cast") -- timed by /stormhide perf (Profiler.lua)
 
 local SIZE = ns.SWING_RING_SIZE
 local TEXT_OFFSET = ns.TIME_TEXT_OFFSET -- shared with Swing.lua's text, which hides while casting

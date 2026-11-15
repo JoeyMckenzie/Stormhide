@@ -1,7 +1,7 @@
 -- The settings window's look (used by Options.lua): the window itself and the panels its sections
 -- sit in, made to match WoW Forever's Professions frame.
 --
--- First choice is Blizzard's own art, found with /catnip art on the Professions frame (2026-10-02):
+-- First choice is Blizzard's own art, found with /stormhide art on the Professions frame (2026-10-02):
 -- the window is PortraitFrameTemplate (UI-Frame-Metal border with title bar, portrait ring and
 -- close button) over the Profession-Background-Overview background; panels are cut from the
 -- Profession-overview-card-generic-Cooking card (its corners, edges and fade, without its
@@ -40,7 +40,7 @@ local function AtlasInfo(name)
 end
 
 -- The portrait: the druid class icon (brown claw marks), as the Character panel shows it (file
--- 625999, uncropped under the round mask; found with /catnip art, 2026-10-02).
+-- 625999, uncropped under the round mask; found with /stormhide art, 2026-10-02).
 local PORTRAIT_ICON = 625999 -- Interface\Icons\ClassIcon_Druid
 
 -- Slicing ----------------------------------------------------------------------------------------
@@ -238,7 +238,7 @@ end
 -- Side tabs --------------------------------------------------------------------------------------
 
 -- Blizzard's side tabs (the Character and Professions windows' tabs down the right edge, found with
--- /catnip art): a 55x60 bronze frame with cut corners, the icon masked to its shape, a yellow
+-- /stormhide art): a 55x60 bronze frame with cut corners, the icon masked to its shape, a yellow
 -- outline when selected and a white one on mouseover.
 art.SIDE_TAB_WIDTH, art.SIDE_TAB_HEIGHT = 55, 60
 local SIDE_TAB_ICON = 50

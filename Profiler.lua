@@ -1,4 +1,4 @@
--- /catnip perf: measures how much time Catnip's own code takes, per module and per event, in and
+-- /stormhide perf: measures how much time Stormhide's own code takes, per module and per event, in and
 -- out of combat, so a change can be compared before and after.
 --
 -- Each runtime file starts with `local CreateFrame, C_Timer = ns.Profiled("<Module>")`. Its plain
@@ -17,7 +17,7 @@ local REAL_CREATE_FRAME = CreateFrame
 local REAL_TIMER = C_Timer
 local CAN_TIME = debugprofilestop ~= nil
 local TOP = 15 -- rows printed in chat (all are saved)
-local KEEP = 10 -- reports kept in CatnipDB.perfReports
+local KEEP = 10 -- reports kept in StormhideDB.perfReports
 
 local running = false
 local rows = {} -- key -> { calls, ms, max, combatCalls, combatMs }
@@ -154,7 +154,7 @@ local function BlizzardLine()
         end
         return string.format("%.3f", value)
     end
-    return string.format("Blizzard's profiler: Catnip recent %s, session %s, peak %s ms; all addons recent %s ms",
+    return string.format("Blizzard's profiler: Stormhide recent %s, session %s, peak %s ms; all addons recent %s ms",
         Get("RecentAverageTime"), Get("SessionAverageTime"), Get("PeakTime"), Get("RecentAverageTime", true))
 end
 
@@ -180,7 +180,7 @@ local function BuildReport()
         return a.row.ms > b.row.ms
     end)
     local lines = {}
-    lines[1] = string.format("%s: %.0fs measured, %.0fs in combat. Times are ms of Catnip code per second of play.",
+    lines[1] = string.format("%s: %.0fs measured, %.0fs in combat. Times are ms of Stormhide code per second of play.",
         label, total, combat)
     lines[2] = string.format("TOTAL: combat %s ms/s, out of combat %s ms/s (%.1f ms over %d entries)",
         PerSecond(sumCombatMs, combat), PerSecond(sumMs - sumCombatMs, out), sumMs, #sorted)
@@ -201,7 +201,7 @@ local function PrintReport(lines)
     local header = BlizzardLine() and 3 or 2
     for i, line in ipairs(lines) do
         if i > header + TOP then
-            ns.Print(string.format("... %d more in CatnipDB.perfReports (after a /reload)", #lines - header - TOP))
+            ns.Print(string.format("... %d more in StormhideDB.perfReports (after a /reload)", #lines - header - TOP))
             break
         end
         ns.Print(i <= header and line or ("|cffcccccc" .. line .. "|r"))
@@ -214,7 +214,7 @@ local function Start(name)
     startedAt, combatSeconds = GetTime(), 0
     combatSince = inCombat and GetTime() or nil
     running = true
-    ns.Print("perf: measuring '" .. label .. "'. /catnip perf to see it so far, /catnip perf stop to finish and save.")
+    ns.Print("perf: measuring '" .. label .. "'. /stormhide perf to see it so far, /stormhide perf stop to finish and save.")
 end
 
 local function Stop()
@@ -229,7 +229,7 @@ local function Stop()
     ns.Print("perf: saved as '" .. label .. "' (/reload writes it to the SavedVariables file).")
 end
 
--- /catnip perf start [label] | stop | (nothing: the report so far, or how to use it)
+-- /stormhide perf start [label] | stop | (nothing: the report so far, or how to use it)
 ns.commands.perf = function(arg)
     if not CAN_TIME then
         ns.Print("perf: debugprofilestop isn't available in this client, so nothing can be timed.")
@@ -242,12 +242,12 @@ ns.commands.perf = function(arg)
         if running then
             Stop()
         else
-            ns.Print("perf: not measuring. /catnip perf start [label]")
+            ns.Print("perf: not measuring. /stormhide perf start [label]")
         end
     elseif running then
         PrintReport(BuildReport())
     else
-        ns.Print("perf: /catnip perf start [label], play a while (in and out of combat), then /catnip perf stop.")
+        ns.Print("perf: /stormhide perf start [label], play a while (in and out of combat), then /stormhide perf stop.")
         local blizzard = BlizzardLine()
         ns.Print(blizzard or "Blizzard's addon profiler (C_AddOnProfiler) isn't in this client.")
     end

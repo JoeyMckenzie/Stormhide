@@ -20,9 +20,9 @@
 --   defaultLength  seconds, for the preview command
 --   arc            from ns.CreateSegmentedArc
 --   onStart, onReady(animate), onHide   optional callbacks
---   command        "/catnip <command> [seconds]" runs a preview
+--   command        "/stormhide <command> [seconds]" runs a preview
 local addonName, ns = ...
-local CreateFrame = ns.Profiled("SegmentedCooldown") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("SegmentedCooldown") -- timed by /stormhide perf (Profiler.lua)
 
 local POLL = 0.1 -- seconds between flag checks while a cooldown runs
 

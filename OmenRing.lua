@@ -12,7 +12,7 @@
 -- the ring (a radial StatusBar, SegmentedArc.lua) and one timer ends it.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame, C_Timer = ns.Profiled("OmenRing") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame, C_Timer = ns.Profiled("OmenRing") -- timed by /stormhide perf (Profiler.lua)
 
 local ICD = 10 -- seconds; 5 segments of 2s, drawn into ring_omen_circular and _angular (make_textures.py)
 local RING_SIZE = ns.COMBO_DOT_SIZE + 8 -- as CooldownRings.lua
@@ -98,7 +98,7 @@ ns.OnLoad(function()
     ns.db.probeLog = nil -- left by the temporary probe that found the cost trick (2026-10-09)
 end)
 
-ns.commands.omen = function(arg) -- /catnip omen [seconds]: a preview run
+ns.commands.omen = function(arg) -- /stormhide omen [seconds]: a preview run
     Start(tonumber(arg) or ICD)
     ns.Print("Omen of Clarity ICD preview:", length, "s")
 end

@@ -1,4 +1,4 @@
-"""Keep Catnip's translation files in step with the code.
+"""Keep Stormhide's translation files in step with the code.
 
 Every piece of text the addon shows is written L["English text"] in the .lua files. This script
 collects those keys and rewrites Locales/<locale>.lua for each language:
@@ -8,11 +8,11 @@ collects those keys and rewrites Locales/<locale>.lua for each language:
   - translations whose English no longer appears in the code (reworded or removed) move to a
     section at the end, so they can be reused or deleted.
 
-Keys are grouped by the file that first uses them, in Catnip.toc's load order, so translators can
+Keys are grouped by the file that first uses them, in Stormhide.toc's load order, so translators can
 see where each one shows. Run from the repo root after changing any text:
 
     py tools/locales.py            update every Locales/*.lua except enUS
-    py tools/locales.py zhTW       also start a new language file (then add it to Catnip.toc)
+    py tools/locales.py zhTW       also start a new language file (then add it to Stormhide.toc)
     py tools/locales.py --check    change nothing; exit 1 if any file is out of date
 """
 import os
@@ -21,7 +21,7 @@ import sys
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 LOCALES = os.path.join(ROOT, "Locales")
-TOC = os.path.join(ROOT, "Catnip.toc")
+TOC = os.path.join(ROOT, "Stormhide.toc")
 
 # A key or value in double quotes, escapes kept as written so they round-trip unchanged.
 STRING = r'"((?:[^"\\]|\\.)*)"'
@@ -43,7 +43,7 @@ NAMES = {
 }
 
 HEADER = """\
--- {name} ({locale}) translation for Catnip.
+-- {name} ({locale}) translation for Stormhide.
 --
 -- To translate a line, remove the "-- " in front and type the translation between the empty
 -- quotes:
@@ -66,7 +66,7 @@ local L = ns.L
 
 
 def lua_files():
-    """The addon's own .lua files in load order (Catnip.toc), Locales and libs excluded."""
+    """The addon's own .lua files in load order (Stormhide.toc), Locales and libs excluded."""
     files = []
     with open(TOC, encoding="utf-8") as toc:
         for line in toc:
@@ -151,7 +151,7 @@ def main(args):
                     out.write(text)
                 status += " (updated)"
         if "Locales/%s.lua" % locale not in listed:
-            status += " (not in Catnip.toc yet)"
+            status += " (not in Stormhide.toc yet)"
         print(status)
     return 1 if check and stale else 0
 

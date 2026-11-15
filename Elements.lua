@@ -21,7 +21,7 @@
 -- combo ring slot shows, ComboRings.lua); its control reads and writes through them. `enabled`, a
 -- function, greys the control out while it returns false (choices only, for now).
 --
--- Stored in CatnipDB.elements[id][key]; nil means the default (or General's value, for inherit).
+-- Stored in StormhideDB.elements[id][key]; nil means the default (or General's value, for inherit).
 -- Shared across Edit Mode layouts.
 local addonName, ns = ...
 local L = ns.L
@@ -207,7 +207,7 @@ function ns.FontObject(font, size)
     local key = file .. ":" .. size
     if not fontObjects[key] then
         fontObjectCount = fontObjectCount + 1
-        local object = CreateFont("CatnipFont" .. fontObjectCount) -- this client requires a (global) name
+        local object = CreateFont("StormhideFont" .. fontObjectCount) -- this client requires a (global) name
         if not pcall(object.SetFont, object, file, size, "") or not object:GetFont() then
             object:SetFont(STANDARD_TEXT_FONT, size, "")
         end

@@ -3,7 +3,7 @@
 -- included) stay visible in both.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame = ns.Profiled("ComboPoints") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("ComboPoints") -- timed by /stormhide perf (Profiler.lua)
 
 local COUNT = 5
 local DOT_SIZE = 38

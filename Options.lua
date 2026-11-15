@@ -1,12 +1,12 @@
--- Settings window (/catnip), styled like WoW Forever's Professions frame: its frame, background
+-- Settings window (/stormhide), styled like WoW Forever's Professions frame: its frame, background
 -- and panels (OptionsArt.lua), gold headers, Blizzard-style arrow sliders, and the same stock
--- checkboxes and red buttons as Catnip Edit Mode (EditMode.lua). Each control reads and writes
+-- checkboxes and red buttons as Stormhide Edit Mode (EditMode.lua). Each control reads and writes
 -- ns.db through the owning module's functions, and every control refreshes whenever
 -- ns.SettingsChanged() fires (so slash commands and dragging in Edit Mode stay in sync).
 --
 -- Controls are grouped into tabs (and a tab can have sub-tabs); each tab is a page laid out top to
 -- bottom. Pages sit in a scroll area, so the window can be resized smaller than its content: drag
--- the bottom-right corner (size saved in CatnipDB.optionsWidth/optionsHeight). Controls stretch to
+-- the bottom-right corner (size saved in StormhideDB.optionsWidth/optionsHeight). Controls stretch to
 -- the window's width.
 local addonName, ns = ...
 local L = ns.L
@@ -57,7 +57,7 @@ local THUMB = RGB(141, 98, 66)
 local THUMB_RIM = RGB(176, 128, 94) -- a lighter bevel just inside the outline
 local THUMB_EDGE = RGB(64, 47, 33)
 local CLEAR = { 0, 0, 0, 0 }
-local ACCENT = { 0.2, 1, 0.6, 1 } -- Catnip green, the chat prefix colour
+local ACCENT = { 0.2, 1, 0.6, 1 } -- Stormhide green, the chat prefix colour
 local HOVER_BLUE = RGB(116, 192, 255) -- hover, as the HUD's preview outlines (Preview.lua)
 local SWITCH_ON_FILL = RGB(58, 45, 28)
 local SWITCH_ON_EDGE = RGB(138, 106, 58)
@@ -119,7 +119,7 @@ local function AddHover(frame, border, edge)
     frame:SetScript("OnLeave", function() border:SetColorTexture(unpack(edge)) end)
 end
 
-local window = art.CreateWindow("CatnipOptions", "Catnip")
+local window = art.CreateWindow("StormhideOptions", "Stormhide")
 window:SetSize(MIN_WIDTH, DEFAULT_HEIGHT) -- the saved size is applied once settings load
 window:SetPoint("CENTER")
 -- FULLSCREEN: one strata over Blizzard's Edit Mode window (DIALOG), whose frame levels otherwise
@@ -135,7 +135,7 @@ if window.SetDontSavePosition then
     window:SetDontSavePosition(true)
 end
 window:Hide()
-table.insert(UISpecialFrames, "CatnipOptions") -- Esc closes it
+table.insert(UISpecialFrames, "StormhideOptions") -- Esc closes it
 
 -- The area under the tab row, inside the frame, holding the scrolling pages.
 local inner = CreateFrame("Frame", nil, window)
@@ -449,7 +449,7 @@ local function Hint(text)
     Place(hint, math.max(12, hint:GetStringHeight()), 10)
 end
 
--- Blizzard's checkbox art (as in Catnip Edit Mode); returns the box and a function to show the
+-- Blizzard's checkbox art (as in Stormhide Edit Mode); returns the box and a function to show the
 -- tick or not. It glows while the mouse is over hoverFrame (the whole row).
 local function CheckboxBox(parent, hoverFrame)
     local box = CreateFrame("Frame", nil, parent)
@@ -2038,7 +2038,7 @@ function ns.ShowSettings()
     window:Show()
 end
 
--- /catnip edit: the settings window and Catnip Edit Mode together.
+-- /stormhide edit: the settings window and Stormhide Edit Mode together.
 ns.commands.edit = function()
     window:Show()
     ns.OpenEditMode()

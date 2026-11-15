@@ -1,5 +1,5 @@
--- Catnip Edit Mode: a panel styled like Blizzard's "HUD Edit Mode" dialog, shown while the widgets
--- are unlocked (the settings window's Move in Edit Mode buttons, or /catnip edit). Only the fallback for
+-- Stormhide Edit Mode: a panel styled like Blizzard's "HUD Edit Mode" dialog, shown while the widgets
+-- are unlocked (the settings window's Move in Edit Mode buttons, or /stormhide edit). Only the fallback for
 -- when Blizzard's Edit Mode can't be used (BlizzardEditMode.lua). Like there, it only moves the
 -- frames: turning them on or off is in the settings window. Closing the panel locks them again.
 -- Built from Blizzard's stock textures and templates (dialog border, red panel buttons) to match
@@ -9,7 +9,7 @@ local L = ns.L
 
 local WIDTH, HEIGHT = 360, 132
 
-local panel = CreateFrame("Frame", "CatnipEditMode", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
+local panel = CreateFrame("Frame", "StormhideEditMode", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
 panel:SetSize(WIDTH, HEIGHT)
 panel:SetPoint("TOP", UIParent, "TOP", 0, -120)
 panel:SetFrameStrata("DIALOG")
@@ -23,7 +23,7 @@ if panel.SetDontSavePosition then
     panel:SetDontSavePosition(true)
 end
 panel:Hide()
-table.insert(UISpecialFrames, "CatnipEditMode") -- Esc closes it (and locks)
+table.insert(UISpecialFrames, "StormhideEditMode") -- Esc closes it (and locks)
 if panel.SetBackdrop then
     panel:SetBackdrop({
         bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
@@ -35,7 +35,7 @@ end
 
 local title = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
 title:SetPoint("TOP", 0, -20)
-title:SetText(L["Catnip Edit Mode"])
+title:SetText(L["Stormhide Edit Mode"])
 
 -- Blizzard's red X; a plain text button if the template is missing.
 local ok, close = pcall(CreateFrame, "Button", nil, panel, "UIPanelCloseButton")

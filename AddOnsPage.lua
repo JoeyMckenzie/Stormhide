@@ -1,6 +1,6 @@
--- Catnip's entry in Blizzard's settings (Options → AddOns). Every setting lives in Catnip's own
+-- Stormhide's entry in Blizzard's settings (Options → AddOns). Every setting lives in Stormhide's own
 -- window, so the page only points there: the druid icon, name and version, a button that closes
--- Blizzard's settings and opens ours, and the /catnip command. Same idea as Leatrix Plus's page.
+-- Blizzard's settings and opens ours, and the /stormhide command. Same idea as Leatrix Plus's page.
 local addonName, ns = ...
 local L = ns.L
 
@@ -19,7 +19,7 @@ icon:SetTexture(DRUID_ICON)
 
 local title = page:CreateFontString(nil, "ARTWORK", "GameFontNormalHuge")
 title:SetPoint("TOP", icon, "BOTTOM", 0, -20)
-title:SetText("Catnip")
+title:SetText("Stormhide")
 local titleFont, _, titleFlags = title:GetFont()
 title:SetFont(titleFont, 48, titleFlags)
 
@@ -31,7 +31,7 @@ version:SetText(GetMetadata and GetMetadata(addonName, "Version") or "")
 local open = CreateFrame("Button", nil, page, "UIPanelButtonTemplate")
 open:SetSize(200, 32)
 open:SetPoint("TOP", version, "BOTTOM", 0, -40)
-open:SetText(L["Open Catnip Settings"])
+open:SetText(L["Open Stormhide Settings"])
 open:SetScript("OnClick", function()
     if SettingsPanel and SettingsPanel:IsShown() then
         HideUIPanel(SettingsPanel)
@@ -41,7 +41,7 @@ end)
 
 local command = page:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 command:SetPoint("TOP", open, "BOTTOM", 0, -16)
-command:SetText(L["or type /catnip"])
+command:SetText(L["or type /stormhide"])
 
-local category = Settings.RegisterCanvasLayoutCategory(page, "Catnip")
+local category = Settings.RegisterCanvasLayoutCategory(page, "Stormhide")
 Settings.RegisterAddOnCategory(category)

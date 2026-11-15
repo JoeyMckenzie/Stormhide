@@ -1,10 +1,9 @@
 ## Interface: 16001
-## Title: Catnip
-## Notes: Druid addon for WoW Forever
-## Author: Durts
-## Version: 1.2.1
-## X-Curse-Project-ID: 1729177
-## SavedVariables: CatnipDB
+## Title: Stormhide
+## Notes: Enhancement Shaman HUD for WoW Forever
+## Author: JoeyMckenzie (built on Catnip by Durts)
+## Version: 0.1.0
+## SavedVariables: StormhideDB
 
 libs\LibEditMode\namespaced.lua
 libs\LibEditMode\embed.xml
@@ -12,7 +11,7 @@ libs\LibEditMode\embed.xml
 Locales\enUS.lua
 Locales\zhCN.lua
 
-Catnip.lua
+Stormhide.lua
 Profiler.lua
 SpellTiming.lua
 RadialBar.lua

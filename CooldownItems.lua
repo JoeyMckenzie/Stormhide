@@ -9,7 +9,7 @@
 -- them straight to Cooldown:SetCooldown on Forever. Unverified by us, so a secret still falls back.
 -- The shared potion cooldown reports on the potion that was used (and on others you own);
 -- EllesmereUI found that once the last of a kind is drunk it only reports on that item's ID, so we
--- remember the last potion used (per character: CatnipDB.chars[character].cdLastPotion).
+-- remember the last potion used (per character: StormhideDB.chars[character].cdLastPotion).
 local addonName, ns = ...
 local L = ns.L
 
@@ -218,11 +218,11 @@ function Items.ScanBags()
     end
 end
 
--- /catnip item <itemID or link>: why an item is or isn't treated as a potion.
+-- /stormhide item <itemID or link>: why an item is or isn't treated as a potion.
 ns.commands.item = function(arg)
     local itemID = tonumber(arg) or tonumber(arg and arg:match("item:(%d+)"))
     if not itemID then
-        ns.Print("usage: /catnip item <item ID> (or shift-click an item into the chat line)")
+        ns.Print("usage: /stormhide item <item ID> (or shift-click an item into the chat line)")
         return
     end
     local _, _, _, _, _, classID, subClassID = GetInfoInstant(itemID)

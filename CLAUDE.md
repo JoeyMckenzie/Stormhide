@@ -1,6 +1,8 @@
-# Catnip
+# Stormhide
 
-A World of Warcraft addon for the **Druid** class, targeting **WoW Forever** (currently in beta). Written in Lua. This is a mostly AI-built side project; the owner is an experienced engineer but new to addon development (formerly a WeakAuras power user).
+A World of Warcraft HUD addon for **Enhancement Shaman**, targeting **WoW Forever**. Written in Lua. A mostly AI-built side project; the owner is an experienced engineer but new to addon development.
+
+Stormhide started as a copy of [Catnip](https://github.com/DurtsGaming/Catnip) (a Feral Druid HUD, MIT), history included, so Catnip's engine fixes can be brought over with `git cherry-pick`. Until the Shaman skeleton lands, much of the code and docs still describe Catnip's Druid features: `docs/design.md` is Catnip's Druid spec, kept as a reference for the engine pieces until Stormhide's own replaces it.
 
 Before feature work, read:
 - `docs/design.md`: the working spec and current **status** of each feature. It summarizes the owner's originals, `docs/design.pdf` and `docs/layout-sketch.svg`.
@@ -14,7 +16,7 @@ Keep these current: when a feature changes or a fact is verified, update the rel
 1. Claude edits files.
 2. User runs `/reload` in-game and reports what happened (chat output, errors, screenshots).3. Repeat. Claude cannot run the game, so ask the user to test anything that needs in-game verification, and say exactly what to look for.
 
-New `.lua` files must be added to `Catnip.toc` or they won't load. In this client, `/reload` picks up new files, `.toc` file lists, and textures (verified 2026-09-27), so no game restart is needed for those. Exception: a **new `## SavedVariables` name was not saved after a `/reload`** (2026-09-27), probably needing a full restart; store new data inside `CatnipDB` instead.
+New `.lua` files must be added to `Stormhide.toc` or they won't load. In this client, `/reload` picks up new files, `.toc` file lists, and textures (verified 2026-09-27), so no game restart is needed for those. Exception: a **new `## SavedVariables` name was not saved after a `/reload`** (2026-09-27), probably needing a full restart; store new data inside `StormhideDB` instead.
 
 ## The API: verify, don't trust memory
 

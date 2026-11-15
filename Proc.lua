@@ -6,7 +6,7 @@
 -- Fallback without AuraContainer: the Cooldown Manager (user must track Omen of Clarity there).
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame = ns.Profiled("Proc") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("Proc") -- timed by /stormhide perf (Profiler.lua)
 
 local OMEN_OF_CLARITY = 16864 -- what the Cooldown Manager tracks
 local CLEARCASTING = 16870 -- the buff itself

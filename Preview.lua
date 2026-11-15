@@ -22,7 +22,7 @@
 -- smallest, so the smaller thing on top wins.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame = ns.Profiled("Preview") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("Preview") -- timed by /stormhide perf (Profiler.lua)
 
 local hud = ns.hud
 local BLUE = { 0.25, 0.65, 1 }
@@ -402,7 +402,7 @@ end
 
 -- On and off ---------------------------------------------------------------------------------------
 
--- Edit Mode (Blizzard's or Catnip's) owns the HUD's mouse while it's open.
+-- Edit Mode (Blizzard's or Stormhide's) owns the HUD's mouse while it's open.
 local function Editing()
     return (ns.IsHudUnlocked and ns.IsHudUnlocked())
         or (EditModeManagerFrame and EditModeManagerFrame:IsShown())
@@ -451,7 +451,7 @@ local function Update()
     end
 end
 
--- While wanted, Edit Mode opening or closing is noticed by polling (no event for Catnip's own).
+-- While wanted, Edit Mode opening or closing is noticed by polling (no event for Stormhide's own).
 local poll = CreateFrame("Frame")
 poll:Hide()
 local sincePoll = 0

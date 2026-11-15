@@ -19,7 +19,7 @@
 -- through ns.onManaPrediction(cost, strength) and borrows the spend colour.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame, C_Timer = ns.Profiled("ManaPrediction") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame, C_Timer = ns.Profiled("ManaPrediction") -- timed by /stormhide perf (Profiler.lua)
 
 local MANA = Enum.PowerType.Mana
 local SIZE = ns.RESOURCE_SIZE

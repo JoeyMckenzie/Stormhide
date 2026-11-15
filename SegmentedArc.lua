@@ -27,7 +27,7 @@
 -- when the arc itself shows or hides (its fade-out included), whatever its parents are doing:
 -- GrowlArc.lua decides which of two arcs shows from it.
 local addonName, ns = ...
-local CreateFrame = ns.Profiled("SegmentedArc") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("SegmentedArc") -- timed by /stormhide perf (Profiler.lua)
 
 local FADE_OUT = 0.45
 

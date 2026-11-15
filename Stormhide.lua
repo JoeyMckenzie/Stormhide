@@ -22,7 +22,7 @@ function ns.Describe(value)
 end
 
 function ns.Print(...)
-    print("|cff33ff99Catnip|r", ...)
+    print("|cff33ff99Stormhide|r", ...)
 end
 
 function ns.Debug(...)
@@ -108,11 +108,11 @@ function ns.FindKnownSpell(spells)
     return nil
 end
 
-local hud = CreateFrame("Frame", "CatnipHUD", UIParent)
+local hud = CreateFrame("Frame", "StormhideHUD", UIParent)
 hud:SetSize(240, 240) -- positioned, scaled and faded by Layout.lua
 ns.hud = hud
 
--- Saved settings (CatnipDB). Modules add their defaults to ns.defaults and
+-- Saved settings (StormhideDB). Modules add their defaults to ns.defaults and
 -- run setup that needs ns.db via ns.OnLoad.
 ns.defaults = { debug = false }
 local loadCallbacks = {}
@@ -132,27 +132,27 @@ function ns.SettingsChanged()
     end
 end
 
--- Slash commands: modules add handlers to ns.commands; "/catnip <name> <arg>".
+-- Slash commands: modules add handlers to ns.commands; "/stormhide <name> <arg>".
 ns.commands = {}
-SLASH_CATNIP1 = "/catnip"
-SlashCmdList.CATNIP = function(msg)
+SLASH_STORMHIDE1 = "/stormhide"
+SlashCmdList.STORMHIDE = function(msg)
     local cmd, arg = strsplit(" ", strtrim(msg):lower(), 2)
     local handler = ns.commands[cmd]
     if handler then
         handler(arg)
     else
-        ns.Print("/catnip: " .. L["open settings"])
-        ns.Print("/catnip edit: " .. L["settings and Edit Mode"])
-        ns.Print("/catnip debug: " .. L["debug messages on or off"])
-        ns.Print("/catnip dev: " .. L["tools for testing and development"])
+        ns.Print("/stormhide: " .. L["open settings"])
+        ns.Print("/stormhide edit: " .. L["settings and Edit Mode"])
+        ns.Print("/stormhide debug: " .. L["debug messages on or off"])
+        ns.Print("/stormhide dev: " .. L["tools for testing and development"])
     end
 end
 
 ns.commands.dev = function()
-    ns.Print("/catnip perf start [label] | stop: time Catnip's code")
-    ns.Print("/catnip cdm, /catnip spells, /catnip item <id>: list what Catnip sees")
-    ns.Print("/catnip sp | ff | pb | growl | omen [seconds]: preview the Shifting Power arc, Faerie Fire, Primal Bite, Growl or Omen of Clarity ring")
-    ns.Print("/catnip art | icon: record the window or icon under the mouse")
+    ns.Print("/stormhide perf start [label] | stop: time Stormhide's code")
+    ns.Print("/stormhide cdm, /stormhide spells, /stormhide item <id>: list what Stormhide sees")
+    ns.Print("/stormhide sp | ff | pb | growl | omen [seconds]: preview the Shifting Power arc, Faerie Fire, Primal Bite, Growl or Omen of Clarity ring")
+    ns.Print("/stormhide art | icon: record the window or icon under the mouse")
 end
 
 ns.commands.debug = function()
@@ -161,8 +161,8 @@ ns.commands.debug = function()
     ns.SettingsChanged()
 end
 
--- /catnip art: with the mouse over a Blizzard window, records every texture in it (debug name,
--- layer, atlas or file, size, tex coords, colour) into CatnipDB.artDump[<window name>], so Claude
+-- /stormhide art: with the mouse over a Blizzard window, records every texture in it (debug name,
+-- layer, atlas or file, size, tex coords, colour) into StormhideDB.artDump[<window name>], so Claude
 -- can read Blizzard's art names from the SavedVariables file to reuse them. /reload afterwards
 -- writes the file.
 local function DescribeTexture(texture)
@@ -174,12 +174,12 @@ local function DescribeTexture(texture)
         width, height, left, top, right, bottom, r, g, b, a, texture:IsShown() and "" or " | hidden")
 end
 
--- /catnip icon: with the mouse over an icon (a macro icon, an action button...), prints its file ID
--- and keeps the last few in CatnipDB.iconPicks, to reuse the icon in Catnip.
+-- /stormhide icon: with the mouse over an icon (a macro icon, an action button...), prints its file ID
+-- and keeps the last few in StormhideDB.iconPicks, to reuse the icon in Stormhide.
 ns.commands.icon = function()
     local focus = GetMouseFoci and GetMouseFoci()[1] or (GetMouseFocus and GetMouseFocus())
     if not focus or focus == WorldFrame or focus == UIParent then
-        ns.Print("put the mouse over an icon, then press Enter on /catnip icon")
+        ns.Print("put the mouse over an icon, then press Enter on /stormhide icon")
         return
     end
     local found
@@ -210,7 +210,7 @@ end
 ns.commands.art = function()
     local focus = GetMouseFoci and GetMouseFoci()[1] or (GetMouseFocus and GetMouseFocus())
     if not focus or focus == WorldFrame or focus == UIParent then
-        ns.Print("put the mouse over a window, then press Enter on /catnip art")
+        ns.Print("put the mouse over a window, then press Enter on /stormhide art")
         return
     end
     while focus:GetParent() and focus:GetParent() ~= UIParent do -- up to the whole window
@@ -237,8 +237,8 @@ ns.commands.art = function()
     ns.Print(string.format("recorded %d textures from %s. /reload to save them to disk.", #lines, name))
 end
 
--- Per-character settings (CatnipDB.chars[player GUID], as ns.char): what depends on the
--- character's spells and talents. Everything else in CatnipDB is account-wide. Kept inside CatnipDB
+-- Per-character settings (StormhideDB.chars[player GUID], as ns.char): what depends on the
+-- character's spells and talents. Everything else in StormhideDB is account-wide. Kept inside StormhideDB
 -- rather than a SavedVariablesPerCharacter, which needs a game restart to start saving.
 -- Keyed by GUID, not name: Forever characters share their first name across the account, so
 -- UnitName("player") gave two characters the same entry (2026-10-08). Set up at PLAYER_LOGIN, when
@@ -295,8 +295,8 @@ frame:SetScript("OnEvent", function(self, event, name)
     if name ~= addonName then
         return
     end
-    CatnipDB = CatnipDB or {}
-    ns.db = CatnipDB
+    StormhideDB = StormhideDB or {}
+    ns.db = StormhideDB
     ns.db.log = nil -- left over from a removed debug log
     ns.db.layouts = nil -- left over from per-Edit Mode layout settings (removed 2026-10-08)
     ns.db.probeCooldowns = nil -- left by the temporary cooldown probe (2026-10-10)

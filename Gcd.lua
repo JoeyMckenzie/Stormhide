@@ -17,7 +17,7 @@
 -- the exact duration object; its 1.0s GCD already roughly matches its swing.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame = ns.Profiled("Gcd") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("Gcd") -- timed by /stormhide perf (Profiler.lua)
 
 local GCD_LENGTH = 1.5 -- Classic GCD outside cat form; not hasted
 

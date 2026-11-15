@@ -17,7 +17,7 @@
 -- changing the segment count means redrawing those.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame = ns.Profiled("ShiftingPower") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("ShiftingPower") -- timed by /stormhide perf (Profiler.lua)
 
 -- Geometry, in step with make_textures.py (SP_CANVAS, SP_SPAN): the arc textures are drawn on a
 -- canvas CANVAS units across, centred on the HUD's centre.
@@ -113,7 +113,7 @@ ns.CreateSegmentedCooldown({
     spells = { ns.SPELL.SHIFTING_POWER },
     defaultLength = 16, -- for the preview command
     arc = arc,
-    command = "sp", -- /catnip sp [seconds]
+    command = "sp", -- /stormhide sp [seconds]
     onStart = HidePulse,
     onHide = HidePulse,
     onReady = function(animate)

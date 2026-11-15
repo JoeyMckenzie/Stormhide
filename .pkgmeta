@@ -1,6 +1,6 @@
 # Read by the BigWigsMods packager (CurseForge upload in .github/workflows/release.yml).
 # Keep the ignore list in step with the export-ignore lines in .gitattributes.
-package-as: Catnip
+package-as: Stormhide
 
 ignore:
   - docs

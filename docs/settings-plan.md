@@ -71,10 +71,10 @@ The Rotation side tab becomes two panes, like the WeakAuras group list: a tree o
 ## Preview mode
 
 - **When:** while the settings window is open on the Rotation tab, out of combat. Combat (`PLAYER_REGEN_DISABLED`) or closing the window ends it, and every element goes back to its live state.
-- **Sample state:** each element draws a representative sample: about 70% energy, 3 combo points, Rip and Rake partway through, a swing running, 2 shift orbs, the Shifting Power arc half full. Existing previews (`/catnip sp|ff|pb|growl`, `ns.Cooldowns.SetPreview`) are reused where they fit.
+- **Sample state:** each element draws a representative sample: about 70% energy, 3 combo points, Rip and Rake partway through, a swing running, 2 shift orbs, the Shifting Power arc half full. Existing previews (`/stormhide sp|ff|pb|growl`, `ns.Cooldowns.SetPreview`) are reused where they fit.
 - **Form switcher:** "Preview as: Cat / Bear / Caster / Prowl / Casting". Opening an element whose settings only apply in one state switches to it (the mana format switches to Caster).
 - **Stand-ins:** elements drawn by AuraContainers (Rip, Rake, ticks, Clearcasting, Enrage) can't be forced to show, so each gets a static copy made from the same textures, shown only in preview.
-- **Edit Mode:** while Blizzard's Edit Mode (or Catnip Edit Mode) is open, dragging the HUD belongs to it, and preview hover and click are switched off.
+- **Edit Mode:** while Blizzard's Edit Mode (or Stormhide Edit Mode) is open, dragging the HUD belongs to it, and preview hover and click are switched off.
 
 ### Hover and click
 
@@ -92,7 +92,7 @@ Edit Mode frames are rectangles, but the HUD is circles and rings that overlap, 
 ## Framework
 
 1. **Element registry.** `ns.RegisterElement{ id, zone, name, frames, hit, highlight, states, options, apply, preview }`. Settings pages, preview, hover and click are all generated from this list, rather than writing every control by hand in Options.lua.
-2. **Storage.** `CatnipDB.elements[id][key]`, falling back to General, then to the option's default. Everything, position included, is shared across Edit Mode layouts (per-layout saving was removed 2026-10-08).
+2. **Storage.** `StormhideDB.elements[id][key]`, falling back to General, then to the option's default. Everything, position included, is shared across Edit Mode layouts (per-layout saving was removed 2026-10-08).
 3. **Opacity.** First choice (2026-10-04): the colour's alpha (swipe colour, vertex colour), which multiplies with the frame and texture alpha the modules animate, so no new frames are needed (the Swing ring zone works this way). Wrappers only where that isn't possible. Many elements already set their own alpha (shift orb curves, smoke fades, the Shifting Power pulse gate), so a user opacity can't simply call `SetAlpha` on them. Each element gets a parent frame whose alpha belongs only to the setting (the `shiftingPowerPulseGate` pattern; alphas multiply). Textures drawn directly on `ns.hud` (backdrop, swing glow, smoke) move into frames first. Keep the frame levels in architecture.md's layering table. The biggest refactor here; done zone by zone.
 4. **Combat.** Our own frames' font and alpha can change in combat, but AuraContainer button art is fixed after setup. Settings that change those elements apply after a `/reload` or a rebuild out of combat (needs testing in-game).
 

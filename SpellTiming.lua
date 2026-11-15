@@ -57,7 +57,7 @@ function ns.CooldownState(spellID, previous)
 end
 
 -- Learned lengths ---------------------------------------------------------------------------------
--- Per character, since talents change them: CatnipDB.chars[character].lengths[kind][spell name], in seconds, rounded to the half second (so a 10% shorter GCD
+-- Per character, since talents change them: StormhideDB.chars[character].lengths[kind][spell name], in seconds, rounded to the half second (so a 10% shorter GCD
 -- from Nature's Grace doesn't stick). Kinds: "gcd" (the GCD a spell starts, e.g. 1.0s for
 -- Rejuvenation with Gift of the Earthmother; Gcd.lua) and "cooldown" (a spell's own cooldown,
 -- unused since 2026-10-10: the cooldown arcs are timed by the game now; kept, not cleared). By

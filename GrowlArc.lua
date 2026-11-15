@@ -14,7 +14,7 @@
 -- Shifting Power's own outline, so the two stay in step.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame = ns.Profiled("GrowlArc") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("GrowlArc") -- timed by /stormhide perf (Profiler.lua)
 
 local CANVAS = 164 -- as ShiftingPower.lua
 local SPAN = math.pi / 4.2 -- either side of 6 o'clock
@@ -78,7 +78,7 @@ ns.CreateSegmentedCooldown({
     label = "Growl",
     spells = { ns.SPELL.GROWL },
     defaultLength = 8, -- for the preview command (~8s seen 2026-10-04)
-    command = "growl", -- /catnip growl [seconds]
+    command = "growl", -- /stormhide growl [seconds]
     arc = arc,
 })
 

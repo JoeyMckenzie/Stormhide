@@ -7,13 +7,13 @@ on:
   push:
     paths:
       - "**.lua"
-      - "Catnip.toc"
+      - "Stormhide.toc"
       - "tools/locales.py"
       - ".github/workflows/locales.yml"
   pull_request:
     paths:
       - "**.lua"
-      - "Catnip.toc"
+      - "Stormhide.toc"
       - "tools/locales.py"
       - ".github/workflows/locales.yml"
 

@@ -4,7 +4,7 @@
 -- while Enrage is up, even in combat when the buff is secret to us.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame = ns.Profiled("Enrage") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("Enrage") -- timed by /stormhide perf (Profiler.lua)
 
 local ENRAGE = 5229 -- the buff's aura ID (verified in Forever)
 local SIZE = ns.RESOURCE_SIZE

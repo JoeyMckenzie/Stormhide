@@ -1,4 +1,4 @@
-# Publishes a release when a version tag is pushed (e.g. v0.1.0). The zip holds a "Catnip" folder,
+# Publishes a release when a version tag is pushed (e.g. v0.1.0). The zip holds a "Stormhide" folder,
 # ready to drop into Interface\AddOns. Files marked export-ignore in .gitattributes are left out.
 # Tags with a hyphen (e.g. v0.1.0-beta.1) are published as pre-releases.
 name: Release
@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build zip
-        run: git archive --format=zip --prefix=Catnip/ -o "Catnip-${GITHUB_REF_NAME}.zip" HEAD
+        run: git archive --format=zip --prefix=Stormhide/ -o "Stormhide-${GITHUB_REF_NAME}.zip" HEAD
 
       - name: Publish release
         env:
@@ -25,10 +25,10 @@ jobs:
         run: |
           prerelease=""
           if [[ "$GITHUB_REF_NAME" == *-* ]]; then prerelease="--prerelease"; fi
-          gh release create "$GITHUB_REF_NAME" "Catnip-${GITHUB_REF_NAME}.zip" \
-            --title "Catnip $GITHUB_REF_NAME" --generate-notes $prerelease
+          gh release create "$GITHUB_REF_NAME" "Stormhide-${GITHUB_REF_NAME}.zip" \
+            --title "Stormhide $GITHUB_REF_NAME" --generate-notes $prerelease
 
-  # Uploads the same tag to CurseForge (project ID from ## X-Curse-Project-ID in Catnip.toc,
+  # Uploads the same tag to CurseForge (project ID from ## X-Curse-Project-ID in Stormhide.toc,
   # game version from ## Interface). Tags with "alpha" or "beta" upload as that release type.
   # Packing rules are in .pkgmeta. Skipped until the CF_API_KEY secret is set.
   curseforge:

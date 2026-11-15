@@ -15,13 +15,13 @@
 --     on cooldown only shows out of combat.
 --   * Buff IDs: usually the ability's own, but not always (Skysight gives Elemental Blessing). When a
 --     tracked ability is cast out of combat, we look for a buff or debuff of ours that started then
---     and remember it (CatnipDB.cdBuffs, by ability name).
+--     and remember it (StormhideDB.cdBuffs, by ability name).
 --
--- Tracked entries (CatnipDB.chars[character].cdTracked, in priority order) are spell IDs (numbers) or item entries
+-- Tracked entries (StormhideDB.chars[character].cdTracked, in priority order) are spell IDs (numbers) or item entries
 -- (strings: "potion", "item:<id>"), which CooldownItems.lua handles.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame, C_Timer = ns.Profiled("Cooldowns") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame, C_Timer = ns.Profiled("Cooldowns") -- timed by /stormhide perf (Profiler.lua)
 
 local SLOT = 64 -- icons are built at this size, then scaled to fit the box
 local OUTLINE = 1.12 -- dashed border size relative to the icon (the dashes sit just outside it); each icon's cell fits the border
@@ -42,12 +42,12 @@ end
 local Cooldowns = {}
 ns.Cooldowns = Cooldowns
 
-local widget = CreateFrame("Frame", "CatnipCooldowns", UIParent)
+local widget = CreateFrame("Frame", "StormhideCooldowns", UIParent)
 widget:SetMovable(true)
 widget:SetResizable(true)
 widget:SetClampedToScreen(true)
 if widget.SetDontSavePosition then
-    widget:SetDontSavePosition(true) -- saved in CatnipDB instead
+    widget:SetDontSavePosition(true) -- saved in StormhideDB instead
 end
 if widget.SetResizeBounds then
     widget:SetResizeBounds(MIN_SIZE, MIN_SIZE)
@@ -505,12 +505,12 @@ local function SpotFromAnchor(rank, count, side, tieToStart)
     return spots[rank + 1]
 end
 
--- Packs the shown icons into the box at the alignment point (CatnipDB.cdAlign: one of the nine
+-- Packs the shown icons into the box at the alignment point (StormhideDB.cdAlign: one of the nine
 -- anchor points), higher priority nearer the anchor: rows fill outward from the anchor's edge
 -- (from the middle row for the middle anchors, then below, then above), and each row fills outward
 -- from the anchor's side (from its middle for the centre anchors, then left, then right). E.g. top
 -- centre: middle of the top row, then the rest of it, then the middle of the second row. Icons are
--- the Icon size setting (CatnipDB.cdIconSize), not sized to the box (owner, 2026-10-09): a row takes
+-- the Icon size setting (StormhideDB.cdIconSize), not sized to the box (owner, 2026-10-09): a row takes
 -- as many as fit across the box's width, and rows past its far edge are hidden or spill outside it
 -- (Overflow). Shows the icons it places and hides overflow, so Update only marks which it wants
 -- (showWanted); the samples always want to show.
@@ -536,7 +536,7 @@ local function Arrange()
     local size = ns.db.cdIconSize or DEFAULTS.cdIconSize
     local cell = size * OUTLINE -- room for the dashed border round an active icon
     local columns = math.max(1, math.floor(width / cell + 0.001))
-    -- Overflow (CatnipDB.cdOverflow): "hide" drops the icons past the rows that fit, lowest priority
+    -- Overflow (StormhideDB.cdOverflow): "hide" drops the icons past the rows that fit, lowest priority
     -- first; "spill" lets their rows run past the box's far edge.
     if (ns.db.cdOverflow or DEFAULTS.cdOverflow) == "hide" then
         local fit = columns * math.max(1, math.floor(height / cell + 0.001))
@@ -861,7 +861,7 @@ local FORM_COOLDOWN = { ns.SPELL.FAERIE_FIRE }
 
 -- Does the spell have a cooldown of its own (not just the GCD), in any form? Checks the spellbook
 -- entry, its base spell and the current form's version; a form version seen with a cooldown is
--- remembered (CatnipDB.cdFormCooldowns), so the spell stays listed in forms where it has none.
+-- remembered (StormhideDB.cdFormCooldowns), so the spell stays listed in forms where it has none.
 local function HasCooldown(spellID)
     local base = BaseSpell(spellID)
     if ns.db.cdFormCooldowns[base] or ns.IsSpellNamed(C_Spell.GetSpellName(base), FORM_COOLDOWN) then
@@ -916,7 +916,7 @@ local function KnownCooldownSpells()
     return spells
 end
 
--- /catnip spells: what the spellbook walk sees, to find out why an ability isn't offered.
+-- /stormhide spells: what the spellbook walk sees, to find out why an ability isn't offered.
 ns.commands.spells = function()
     local walked = WalkSpellbook(function(line, itemType, spellID)
         local name = spellID and C_Spell.GetSpellName(spellID) or "?"

@@ -1,4 +1,4 @@
--- Simplified Chinese (zhCN) translation for Catnip.
+-- Simplified Chinese (zhCN) translation for Stormhide.
 --
 -- To translate a line, remove the "-- " in front and type the translation between the empty
 -- quotes:
@@ -18,7 +18,7 @@ end
 local addonName, ns = ...
 local L = ns.L
 
--- Catnip.lua
+-- Stormhide.lua
 L["open settings"] = "打开设置"
 L["settings and Edit Mode"] = "设置和编辑模式"
 L["debug messages on or off"] = "开启或关闭调试信息"
@@ -144,13 +144,13 @@ L["Tracking Potions: %s's buff will light up the Potions icon."] = "追踪药水
 L["Cooldown Frame"] = "冷却框体"
 
 -- EditMode.lua
-L["Catnip Edit Mode"] = "Catnip 编辑模式"
+L["Stormhide Edit Mode"] = "Stormhide 编辑模式"
 L["Drag a frame to move it. Click it for its settings."] = "拖动框体以移动，点击打开其设置。"
 L["Reset Positions"] = "重置位置"
 L["Done"] = "完成"
 
 -- BlizzardEditMode.lua
-L["Catnip Settings"] = "Catnip 设置"
+L["Stormhide Settings"] = "Stormhide 设置"
 L["Edit Mode can't open in combat."] = "战斗中无法打开编辑模式。"
 
 -- Preview.lua
@@ -208,5 +208,5 @@ L["Where icons gather inside the frame."] = "图标在框体内聚集的位置�
 L["To show countdown numbers, turn on Options > Action Bars > Show Numbers for Cooldowns."] = "要显示倒计时数字，请开启 选项 > 动作条 > 显示冷却时间。"
 
 -- AddOnsPage.lua
-L["Open Catnip Settings"] = "打开 Catnip 设置"
-L["or type /catnip"] = "或输入 /catnip"
+L["Open Stormhide Settings"] = "打开 Stormhide 设置"
+L["or type /stormhide"] = "或输入 /stormhide"

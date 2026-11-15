@@ -5,7 +5,7 @@
 -- while Maul is queued unless the Swing/Cast Timer's "Match Maul Color When Queued" is off.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame = ns.Profiled("Swing") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("Swing") -- timed by /stormhide perf (Profiler.lua)
 
 local SIZE = ns.SWING_RING_SIZE
 local GLOW_SCALE = 1.14 -- ring_glow's soft band sits just inside ring_bar's band (1.18 centres it; see tools/make_textures.py)
@@ -114,7 +114,7 @@ function ns.GetSwingDuration()
 end
 
 -- The text shows tenths, so it's only rewritten when the shown tenth (or the swing's length)
--- changes, not every frame (/catnip perf, 2026-10-10: it was the second-costliest thing in combat).
+-- changes, not every frame (/stormhide perf, 2026-10-10: it was the second-costliest thing in combat).
 local shownTenth, shownDuration
 
 info:SetScript("OnUpdate", function()

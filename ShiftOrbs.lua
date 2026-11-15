@@ -43,7 +43,7 @@
 -- cost, so they're made when a cast starts (kept per cost); if that fails in combat, no prediction.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame = ns.Profiled("ShiftOrbs") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("ShiftOrbs") -- timed by /stormhide perf (Profiler.lua)
 
 local COMBAT_ONLY = false -- off for now: the orbs show in and out of combat
 local MAX_ORBS = 5

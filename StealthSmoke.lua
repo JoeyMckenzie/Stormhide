@@ -8,7 +8,7 @@
 -- and fades in while the clouds whirl fast and slow to their drift. Leaving stealth is instant.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame = ns.Profiled("StealthSmoke") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("StealthSmoke") -- timed by /stormhide perf (Profiler.lua)
 
 local SMOKE_SIZE = 160 -- the textures' canvas in HUD units (SMOKE_UNITS in make_textures.py)
 local INTRO = 1.2 -- seconds the billow takes

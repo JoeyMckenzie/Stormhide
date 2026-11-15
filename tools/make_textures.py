@@ -1,4 +1,4 @@
-"""Generate Catnip's textures as 32-bit TGA files in media/.
+"""Generate Stormhide's textures as 32-bit TGA files in media/.
 
 Textures are white with the shape in the alpha channel, so they can be tinted in-game
 with SetVertexColor. Shape functions take (distance from centre, dx, dy) and return alpha,

@@ -17,7 +17,7 @@
 -- hard to read near the end.
 local addonName, ns = ...
 local L = ns.L
-local CreateFrame = ns.Profiled("DotRings") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("DotRings") -- timed by /stormhide perf (Profiler.lua)
 
 -- Forever: each rank's aura has its own ID. key: saved in the combo ring settings; label: for debug
 -- output; choice and order: its text and place in their dropdown; dot: its slot by default; textures: by segment shape; length: the sample's, in preview mode.

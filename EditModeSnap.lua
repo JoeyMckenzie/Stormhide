@@ -1,11 +1,11 @@
--- Snapping for Catnip's frames in Blizzard's Edit Mode. LibEditMode doesn't snap (a TODO in the
+-- Snapping for Stormhide's frames in Blizzard's Edit Mode. LibEditMode doesn't snap (a TODO in the
 -- library), so this copies Blizzard's rules (EditModeMagnetismManager, Blizzard_EditMode's
 -- EditModeUtil.lua): while Edit Mode's Snap option is on, a dropped frame within 8 pixels of the
 -- screen's edges or centre, a grid line (while the grid shows), or the facing edge of a neighbouring
 -- Edit Mode frame jumps to it. Corners line up with that neighbour too. It only reads Blizzard's
 -- frames and never calls Edit Mode's code, so nothing of Blizzard's is tainted.
 local addonName, ns = ...
-local CreateFrame = ns.Profiled("EditModeSnap") -- timed by /catnip perf (Profiler.lua)
+local CreateFrame = ns.Profiled("EditModeSnap") -- timed by /stormhide perf (Profiler.lua)
 
 local RANGE = 8 -- pixels; Blizzard's magnetismRange
 
@@ -20,7 +20,7 @@ local function Sides(region)
 end
 
 -- The boxes another frame can snap to: Blizzard's Edit Mode frames (their selection boxes) and
--- other LibEditMode frames, Catnip's included. `selections` is LibEditMode's frame -> selection map.
+-- other LibEditMode frames, Stormhide's included. `selections` is LibEditMode's frame -> selection map.
 local function Neighbours(frame, selections)
     local boxes = {}
     local function Add(region)

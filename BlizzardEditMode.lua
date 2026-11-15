@@ -1,10 +1,10 @@
--- Catnip's frames in Blizzard's Edit Mode, through LibEditMode (libs/LibEditMode, by p3lim). While
+-- Stormhide's frames in Blizzard's Edit Mode, through LibEditMode (libs/LibEditMode, by p3lim). While
 -- Blizzard's Edit Mode is open, the Rotation Frame (the HUD) and the Cooldown Frame get Blizzard's
 -- selection box and can be dragged; clicking one opens a Blizzard-style popup with two buttons:
--- Catnip Settings, and the library's own Reset Position. Edit Mode only moves the frames: turning
--- them on or off, scale, opacity and size are in Catnip's settings window. Positions are saved in
--- CatnipDB, one for each frame, whichever Edit Mode layout is active. If the library or Blizzard's
--- Edit Mode is missing, Catnip's own Edit Mode (EditMode.lua) stays in charge.
+-- Stormhide Settings, and the library's own Reset Position. Edit Mode only moves the frames: turning
+-- them on or off, scale, opacity and size are in Stormhide's settings window. Positions are saved in
+-- StormhideDB, one for each frame, whichever Edit Mode layout is active. If the library or Blizzard's
+-- Edit Mode is missing, Stormhide's own Edit Mode (EditMode.lua) stays in charge.
 local addonName, ns = ...
 local L = ns.L
 
@@ -14,9 +14,9 @@ if not (lib and lib.AddFrame and EditModeManagerFrame) then
 end
 
 local hud = ns.hud
-local cooldowns = CatnipCooldowns -- Cooldowns.lua's box
+local cooldowns = StormhideCooldowns -- Cooldowns.lua's box
 
--- A frame's centre as an offset from the screen centre, in UIParent units: how Catnip stores
+-- A frame's centre as an offset from the screen centre, in UIParent units: how Stormhide stores
 -- positions.
 local function CentreOffset(frame)
     local scale = frame:GetScale()
@@ -61,7 +61,7 @@ local function SnapOnDrop(frame, move)
     end)
 end
 
--- Clicking (selecting) a frame turns an open Catnip settings window to that frame's settings.
+-- Clicking (selecting) a frame turns an open Stormhide settings window to that frame's settings.
 local function FollowOnClick(frame, where)
     local selection = lib.frameSelections and lib.frameSelections[frame]
     if selection then
@@ -89,28 +89,28 @@ ns.OnSettingsChanged(UpdateHudDefault)
 
 lib:AddFrame(hud, function(frame)
     ns.SetHudPosition(CentreOffset(frame))
-end, hudDefault, "Catnip: " .. L["Rotation Frame"])
+end, hudDefault, "Stormhide: " .. L["Rotation Frame"])
 FollowOnClick(hud, "hud")
 SnapOnDrop(hud, function(dx, dy)
     ns.SetHudPosition(ns.db.x + dx, ns.db.y + dy)
 end)
-AddButtons(hud, { { text = L["Catnip Settings"], click = function() ns.OpenSettings("hud") end } })
+AddButtons(hud, { { text = L["Stormhide Settings"], click = function() ns.OpenSettings("hud") end } })
 
 -- Cooldown Frame ---------------------------------------------------------------------------------
 
 lib:AddFrame(cooldowns, function(frame)
     local x, y = CentreOffset(frame)
     ns.Cooldowns.SetLayout(x, y, ns.db.cdWidth, ns.db.cdHeight)
-end, { point = "CENTER", x = ns.defaults.cdX, y = ns.defaults.cdY }, "Catnip: " .. L["Cooldown Frame"])
+end, { point = "CENTER", x = ns.defaults.cdX, y = ns.defaults.cdY }, "Stormhide: " .. L["Cooldown Frame"])
 FollowOnClick(cooldowns, "cooldowns")
 SnapOnDrop(cooldowns, function(dx, dy)
     ns.Cooldowns.SetLayout(ns.db.cdX + dx, ns.db.cdY + dy, ns.db.cdWidth, ns.db.cdHeight)
 end)
-AddButtons(cooldowns, { { text = L["Catnip Settings"], click = function() ns.OpenSettings("cooldowns") end } })
+AddButtons(cooldowns, { { text = L["Stormhide Settings"], click = function() ns.OpenSettings("cooldowns") end } })
 
 -- Entering and leaving -----------------------------------------------------------------------------
 
--- Blizzard closes open windows as Edit Mode starts, Catnip's settings among them. Opened from them
+-- Blizzard closes open windows as Edit Mode starts, Stormhide's settings among them. Opened from them
 -- (ns.OpenEditMode), they come back once it has; opened from the game menu, they stay closed
 -- (owner, 2026-10-09).
 local reopenSettings = false
@@ -121,7 +121,7 @@ lib:RegisterCallback("enter", function()
         C_Timer.After(0, ns.ShowSettings) -- after Blizzard's closing has run
     end
     if ns.IsHudUnlocked() then
-        ns.SetHudUnlocked(false) -- Blizzard's Edit Mode takes over from Catnip's own
+        ns.SetHudUnlocked(false) -- Blizzard's Edit Mode takes over from Stormhide's own
     end
     ns.Cooldowns.SetPreview(true)
 end)
@@ -130,13 +130,13 @@ lib:RegisterCallback("exit", function()
     ns.Cooldowns.SetPreview(false)
 end)
 
--- Opening Edit Mode (/catnip edit, the Move in Edit Mode buttons in Catnip's settings) now opens Blizzard's.
+-- Opening Edit Mode (/stormhide edit, the Move in Edit Mode buttons in Stormhide's settings) now opens Blizzard's.
 function ns.OpenEditMode()
     if InCombatLockdown() then
         ns.Print(L["Edit Mode can't open in combat."])
         return
     end
-    reopenSettings = _G.CatnipOptions and _G.CatnipOptions:IsShown() or false
+    reopenSettings = _G.StormhideOptions and _G.StormhideOptions:IsShown() or false
     ShowUIPanel(EditModeManagerFrame)
     if not (EditModeManagerFrame and EditModeManagerFrame:IsShown()) then
         reopenSettings = false -- it didn't open

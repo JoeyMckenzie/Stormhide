@@ -71,7 +71,7 @@ for _, ring in ipairs(RINGS) do
         spells = ring.spells,
         castAllowed = ring.castAllowed,
         defaultLength = ring.defaultLength,
-        command = ring.command, -- /catnip <command> [seconds], in Cat or Bear Form (shows only while in a slot)
+        command = ring.command, -- /stormhide <command> [seconds], in Cat or Bear Form (shows only while in a slot)
         arc = arc,
     })
 
