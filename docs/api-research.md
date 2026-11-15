@@ -192,6 +192,29 @@ The Cooldown Manager viewers (`BuffIconCooldownViewer`, `BuffBarCooldownViewer`,
 | Shifting Power | 1322605 (`/dump C_Spell.GetSpellInfo("Shifting Power").spellID`, 2026-10-15: the highest rank that character knew) |
 | Lacerate | 1328617 (`/dump C_Spell.GetSpellInfo("Lacerate").spellID`, 2026-11-06: the highest rank that character knew; **not** in ForeverAuras' list below, so that list is incomplete). The debuff has the same ID as the spell, at least for that rank (the stacks showed in the owner's test, 2026-11-06). Also listed: 414644, 1235826, 1235827 (ForeverAuras, unconfirmed) |
 
+## Shaman (Stormhide)
+
+Everything above was found on Druids in Catnip, before Stormhide was forked from it (2026-11-14). The API facts carry over; the Druid IDs are kept as evidence for the patterns below.
+
+**Spell IDs.** Forever keeps Classic's IDs for older spells (Rake, Rip and Demoralizing Roar all matched), but newer ones get new IDs (Lacerate is 1328617). Confirm a spell with `/dump C_Spell.GetSpellInfo("<name>")` before relying on its ID, and record it here.
+
+| What | IDs | State |
+|------|-----|-------|
+| Earth Shock | 8042, 8044, 8045, 8046, 10412, 10413, 10414 (Classic) | `ns.SPELL.EARTH_SHOCK = 8042`; **unverified** |
+| Flame Shock (shares the shock cooldown) | 8050, 8052, 8053, 10447, 10448, 29228 (Classic) | unverified |
+| Lightning Shield | 324, 325, 905, 945, 8134, 10431, 10432 (Classic) | unverified |
+| Stormstrike | 17364 (Classic) | unverified |
+| Windfury Weapon | 8232, 8235, 10486, 16362 (Classic) | unverified |
+| Maelstrom Weapon (buff) | guides give 408498, which may be the talent rather than the buff | unverified |
+| Fire Nova | 8349 or 408345 (sources disagree) | unverified |
+| Rage of the Farseer | 425336 | unverified |
+
+**To probe before building** (unknown under combat restrictions):
+- Totems: `GetTotemInfo(slot)` in and out of combat.
+- Weapon imbues: `GetWeaponEnchantInfo()` in and out of combat.
+- Whether Lightning Bolt's swing reset (below 5 Maelstrom stacks) fires a `PLAYER_SWING`, so the swing ring restarts.
+- Whether `Interface\Icons\ClassIcon_Shaman` loads by path (the settings portrait and the AddOns page; Catnip used the Druid icon's file ID, 625999).
+
 ## Dead ends (don't retry)
 
 - Reading the GCD from spell 61304 (doesn't exist in Forever).

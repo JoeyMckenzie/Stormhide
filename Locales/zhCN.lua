@@ -32,7 +32,6 @@ L["Circle"] = "圆环"
 L["Fill"] = "填充"
 L["Ring"] = "外环"
 L["Below"] = "下方"
-L["Arcs and Orbs"] = "弧条和光球"
 L["Text"] = "文字"
 L["None"] = "无"
 L["Thin"] = "细"
@@ -46,9 +45,6 @@ L["Click to edit"] = "点击编辑"
 
 -- Layout.lua
 L["Rotation Frame"] = "循环框体"
-L["Stealth Mode"] = "潜行模式"
-L["Enabled"] = "启用"
-L["Opacity while stealthed"] = "潜行时不透明度"
 
 -- Resource.lua
 L["Resource Circle"] = "资源圆环"
@@ -61,7 +57,7 @@ L["Value"] = "数值"
 L["Resource Value"] = "资源数值"
 
 -- ComboPoints.lua
-L["Combo Points"] = "连击点数"
+-- L["Maelstrom Dots"] = ""
 L["Opacity"] = "不透明度"
 
 -- ComboRings.lua
@@ -76,19 +72,13 @@ L["Swing Time"] = "攻击计时"
 L["Swing Timer"] = "平砍计时条"
 L["Bar opacity"] = "计时条不透明度"
 L["Color"] = "颜色"
-L["Maul queued color"] = "槌击排队颜色"
-L["Maul Orb"] = "槌击光球"
 L["The swing timer isn't supported in this version of the game."] = "当前游戏版本不支持平砍计时条。"
-
--- StealthSmoke.lua
-L["Stealth Smoke"] = "潜行烟雾"
 
 -- Cast.lua
 L["Cast Time"] = "施法计时"
 L["Swing/Cast Timer"] = "平砍/施法计时"
 L["Timer size"] = "计时文字大小"
 L["Spell name size"] = "法术名称大小"
-L["Match Maul color when queued"] = "槌击排队时同步颜色"
 L["Cast Timer"] = "施法计时条"
 
 -- ManaPrediction.lua
@@ -101,38 +91,8 @@ L["Five-Second Ring"] = "五秒规则圆环"
 -- Gcd.lua
 L["GCD Pie"] = "GCD 饼图"
 
--- Proc.lua
-L["To see Clearcasting in combat, add Omen of Clarity to the Cooldown Manager's tracked buffs."] = "要在战斗中显示节能施法，请把清晰预兆加入冷却管理器的追踪的增益效果。"
-
--- DotRings.lua
-L["Rake Duration"] = "扫击持续时间"
-L["Rip Duration"] = "撕扯持续时间"
--- L["Demoralizing Roar Duration"] = ""
-L["%s will move to combo point %d after combat."] = "%s 将在战斗结束后移到第 %d 个连击点。"
-L["DoT rings aren't supported in this version of the game."] = "当前游戏版本不支持 DoT 外环。"
-
--- Enrage.lua
-L["The Enrage tint isn't supported in this version of the game."] = "当前游戏版本不支持狂怒染色。"
-L["Enrage Tint"] = "狂怒染色"
-
--- ShiftingPower.lua
-L["Shifting Power Arc"] = "变形能量弧条"
-
--- GrowlArc.lua
-L["Growl Arc"] = "低吼弧条"
-L["Cooldown Arc"] = "冷却弧条"
-L["Shifting Power ready pulse"] = "变形能量就绪闪光"
-
--- ShiftOrbs.lua
-L["Shift Orbs"] = "变形光球"
-L["Show almost-ready orb"] = "显示即将就绪的光球"
-
 -- CooldownRings.lua
-L["Faerie Fire Cooldown"] = "精灵之火冷却"
-L["Primal Bite Cooldown"] = "原始撕咬冷却"
-
--- OmenRing.lua
-L["Omen of Clarity Internal Cooldown"] = "清晰预兆内置冷却"
+-- L["Earth Shock Cooldown"] = ""
 
 -- CooldownItems.lua
 L["Potions (%s)"] = "药水（%s）"
@@ -153,14 +113,10 @@ L["Done"] = "完成"
 L["Stormhide Settings"] = "Stormhide 设置"
 L["Edit Mode can't open in combat."] = "战斗中无法打开编辑模式。"
 
--- Preview.lua
-L["Caster"] = "人形态"
-L["Bear"] = "熊"
-L["Cat"] = "豹"
-
 -- Options.lua
 L["The color picker isn't available in this version of the game."] = "当前游戏版本无法使用颜色选择器。"
 L["General (%s)"] = "通用（%s）"
+L["Enabled"] = "启用"
 L["Disabled"] = "禁用"
 L["Move in Edit Mode"] = "在编辑模式中移动"
 L["Reset..."] = "重置…"
@@ -182,8 +138,6 @@ L["Scale"] = "缩放"
 L["Overall opacity"] = "整体不透明度"
 L["Horizontal position"] = "水平位置"
 L["Vertical position"] = "垂直位置"
-L["Preview"] = "预览"
-L["Stealth"] = "潜行"
 L["Reset to defaults"] = "恢复默认设置"
 L["Default font and outline. Elements can choose their own."] = "默认字体和描边，各元素可单独设置。"
 L["Cooldown"] = "冷却"
@@ -210,3 +164,34 @@ L["To show countdown numbers, turn on Options > Action Bars > Show Numbers for C
 -- AddOnsPage.lua
 L["Open Stormhide Settings"] = "打开 Stormhide 设置"
 L["or type /stormhide"] = "或输入 /stormhide"
+
+-- No longer used (the English changed or the text was removed). Reuse or delete:
+L["Arcs and Orbs"] = "弧条和光球"
+L["Stealth Mode"] = "潜行模式"
+L["Opacity while stealthed"] = "潜行时不透明度"
+L["Combo Points"] = "连击点数"
+L["Maul queued color"] = "槌击排队颜色"
+L["Maul Orb"] = "槌击光球"
+L["Stealth Smoke"] = "潜行烟雾"
+L["Match Maul color when queued"] = "槌击排队时同步颜色"
+L["To see Clearcasting in combat, add Omen of Clarity to the Cooldown Manager's tracked buffs."] = "要在战斗中显示节能施法，请把清晰预兆加入冷却管理器的追踪的增益效果。"
+L["Rake Duration"] = "扫击持续时间"
+L["Rip Duration"] = "撕扯持续时间"
+L["%s will move to combo point %d after combat."] = "%s 将在战斗结束后移到第 %d 个连击点。"
+L["DoT rings aren't supported in this version of the game."] = "当前游戏版本不支持 DoT 外环。"
+L["The Enrage tint isn't supported in this version of the game."] = "当前游戏版本不支持狂怒染色。"
+L["Enrage Tint"] = "狂怒染色"
+L["Shifting Power Arc"] = "变形能量弧条"
+L["Growl Arc"] = "低吼弧条"
+L["Cooldown Arc"] = "冷却弧条"
+L["Shifting Power ready pulse"] = "变形能量就绪闪光"
+L["Shift Orbs"] = "变形光球"
+L["Show almost-ready orb"] = "显示即将就绪的光球"
+L["Faerie Fire Cooldown"] = "精灵之火冷却"
+L["Primal Bite Cooldown"] = "原始撕咬冷却"
+L["Omen of Clarity Internal Cooldown"] = "清晰预兆内置冷却"
+L["Caster"] = "人形态"
+L["Bear"] = "熊"
+L["Cat"] = "豹"
+L["Preview"] = "预览"
+L["Stealth"] = "潜行"

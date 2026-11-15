@@ -4,8 +4,7 @@ local L = ns.L
 ns.MEDIA = "Interface\\AddOns\\" .. addonName .. "\\media\\"
 ns.RESOURCE_SIZE = 100
 ns.SWING_RING_SIZE = 134 -- band starts ~3px outside the resource circle's border
--- Top of the cast and swing time text, below the HUD's centre: under the shift orbs
--- (ShiftOrbs.lua: centres 89 below, 22.8 across, so their bottom is ~100.4).
+-- Top of the cast and swing time text, below the HUD's centre.
 ns.TIME_TEXT_OFFSET = 104
 
 -- In combat, Midnight hands addons "secret" values we can display but not compare or do math on.
@@ -46,24 +45,7 @@ end
 -- ForeverAuras' SecretAuraRanks.lua (talentsforever.com data). Never look a spell up by an English
 -- name: other clients name it in their own language.
 ns.SPELL = {
-    BEAR_FORM = 5487,
-    CAT_FORM = 768,
-    CLAW = 1082,
-    DIRE_BEAR_FORM = 9634,
-    FAERIE_FIRE = 770,
-    FAERIE_FIRE_FERAL = 16857, -- Classic's; in Forever the form version seems to keep the plain name
-    GROWL = 6795,
-    LACERATE = 1328617, -- from /dump in-game, 2026-11-06 (the rank the player knew)
-    MAUL = 6807,
-    PRIMAL_BITE = 407995,
-    PROWL = 5215,
-    RAKE = 1822,
-    REGROWTH = 8936,
-    RIP = 1079,
-    SHADOWMELD = 20580,
-    SHIFTING_POWER = 1322605, -- from /dump in-game, 2026-10-15 (the rank the player knew)
-    SHRED = 5221,
-    WRATH = 5176,
+    EARTH_SHOCK = 8042,
 }
 
 -- The client's name for a spell, in its own language, from the ID of any rank. nil while unknown.
@@ -150,8 +132,8 @@ end
 
 ns.commands.dev = function()
     ns.Print("/stormhide perf start [label] | stop: time Stormhide's code")
-    ns.Print("/stormhide cdm, /stormhide spells, /stormhide item <id>: list what Stormhide sees")
-    ns.Print("/stormhide sp | ff | pb | growl | omen [seconds]: preview the Shifting Power arc, Faerie Fire, Primal Bite, Growl or Omen of Clarity ring")
+    ns.Print("/stormhide spells, /stormhide item <id>: list what Stormhide sees")
+    ns.Print("/stormhide es [seconds]: preview the Earth Shock ring")
     ns.Print("/stormhide art | icon: record the window or icon under the mouse")
 end
 
@@ -246,7 +228,6 @@ end
 local CHARACTER_KEYS = {
     "cdTracked", -- Cooldowns.lua: the tracked cooldowns, in priority order
     "cdLastPotion", -- CooldownItems.lua
-    "lengths", -- SpellTiming.lua: learned cooldown and GCD lengths (talents change them)
 }
 
 local characterCallbacks = {}

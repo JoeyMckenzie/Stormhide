@@ -4,19 +4,14 @@
 -- steadily, over a glowing band (Blizzard's "gain" glow: the bar's own texture with
 -- UI-StatusBar-Glow added on top, linear over 0.5s); if it lands, the band goes when the mana is
 -- spent.
--- Only shown while the power shown is mana (caster forms): Cat and Bear abilities are instant.
--- A heal pressed in Cat Form drops the form and starts the cast; the cast's START and the switch
--- to showing mana come in either order, so the prediction starts regardless of what's shown and
--- the bands appear once Resource.lua shows mana (ns.onResourceUpdate).
+-- Only shown while the power shown is mana; the bands appear once Resource.lua shows mana
+-- (ns.onResourceUpdate).
 --
 -- Mana is secret in combat, so the fill isn't lowered by subtracting: Resource.lua raises the
 -- bar's range by the cost (ns.SetResourceOffset). That needs max mana as a plain number, read
 -- whenever it's readable and kept. The cost comes from C_Spell.GetSpellPowerCost, readable in
 -- combat (FiveSecondRule.lua relies on it too). The bands fill just the gap between mana - cost
 -- and mana (see AnchorBands).
---
--- ShiftOrbs.lua dims the orbs the cast would cost, fading the dim out with a refund: it's told
--- through ns.onManaPrediction(cost, strength) and borrows the spend colour.
 local addonName, ns = ...
 local L = ns.L
 local CreateFrame, C_Timer = ns.Profiled("ManaPrediction") -- timed by /stormhide perf (Profiler.lua)
@@ -25,13 +20,9 @@ local MANA = Enum.PowerType.Mana
 local SIZE = ns.RESOURCE_SIZE
 local SMOOTH = Enum.StatusBarInterpolation and Enum.StatusBarInterpolation.ExponentialEaseOut
 local SPEND_COLOR = { 0.45, 0.45, 0.6 } -- tints fill_mana darker, like Blizzard's cost band
--- Shadowmelded, the mana fill is stealth's periwinkle (Resource.lua), so the bands are too: the
--- same art, the cost band tinted darker.
-local MANA_FILE, STEALTH_FILE = ns.MEDIA .. "fill_mana", ns.MEDIA .. "fill_energy_prowl"
-local STEALTH_SPEND_COLOR = { 0.5, 0.5, 0.55 }
+local MANA_FILE = ns.MEDIA .. "fill_mana"
 local GLOW_FILE = "Interface\\TargetingFrame\\UI-StatusBar-Glow" -- Blizzard's gain glow, drawn additively
 local GLOW_ALPHA = 0.75 -- as Blizzard's
-ns.MANA_SPEND_COLOR = SPEND_COLOR -- for ShiftOrbs.lua
 local REFUND_TIME = 0.5 -- Blizzard's gain glow runs 0.5s, linear
 -- A stop event starts the refund at once (Blizzard doesn't wait either). If our SUCCEEDED arrives
 -- this soon after, the stop came first on a cast that landed, so the refund is undone.
@@ -49,21 +40,8 @@ level:SetOrientation("VERTICAL")
 level:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
 level:SetStatusBarColor(0, 0, 0, 0)
 
-local bands = {} -- every band, with its colours: band.color, band.stealthColor
-
--- Gives each band the mana art, or stealth's periwinkle while stealthed.
-local function StyleBands()
-    local stealthed = ns.IsStealthMode()
-    for _, band in ipairs(bands) do
-        band.fill:SetTexture(stealthed and STEALTH_FILE or MANA_FILE)
-        local color = stealthed and band.stealthColor or band.color
-        band.fill:SetVertexColor(color[1], color[2], color[3])
-    end
-end
-
 -- With glow, Blizzard's glow texture is added over the band (it stretches over the gap the same way).
--- stealthColor: its tint over the periwinkle art (default: `color`).
-local function CreateBand(color, glow, stealthColor)
+local function CreateBand(color, glow)
     local band = CreateFrame("Frame", nil, ns.hud)
     band:SetFrameLevel(ns.hud:GetFrameLevel() + 1)
     band:SetClipsChildren(true)
@@ -75,6 +53,8 @@ local function CreateBand(color, glow, stealthColor)
     fill:SetSize(SIZE, SIZE)
     fill:SetPoint("CENTER", ns.hud)
     fill:AddMaskTexture(mask)
+    fill:SetTexture(MANA_FILE)
+    fill:SetVertexColor(color[1], color[2], color[3])
     if glow then
         local texture = band:CreateTexture(nil, "ARTWORK", nil, 1)
         texture:SetTexture(GLOW_FILE)
@@ -87,15 +67,11 @@ local function CreateBand(color, glow, stealthColor)
         texture:AddMaskTexture(mask)
     end
     band:Hide()
-    band.fill, band.color, band.stealthColor = fill, color, stealthColor or color
-    bands[#bands + 1] = band
-    StyleBands()
     return band
 end
 
-local spendBand = CreateBand(SPEND_COLOR, false, STEALTH_SPEND_COLOR)
+local spendBand = CreateBand(SPEND_COLOR, false)
 local refundBand = CreateBand({ 1, 1, 1 }, true)
-ns.OnStealthChanged(StyleBands)
 
 -- Anchors the bands to the two fills' top edges (again each cast, in case Resource.lua's
 -- StatusBar handed out a new fill texture). False if the client refused.
@@ -164,27 +140,11 @@ local function RefundProgress()
     return math.min((GetTime() - refundStart) / REFUND_TIME, 1)
 end
 
--- Tells ShiftOrbs.lua the cost and how strong its dim is: 1 while the dark band shows, fading to
--- 0 with the refund; no cost while neither band shows
-local function NotifyOrbs(band)
-    if not ns.onManaPrediction then
-        return
-    end
-    if band == spendBand then
-        ns.onManaPrediction(cost, 1)
-    elseif band == refundBand then
-        ns.onManaPrediction(cost, 1 - RefundProgress())
-    else
-        ns.onManaPrediction(nil)
-    end
-end
-
 -- The band for the current state, shown only while the circle shows mana
 local function ShowBand(band)
     local mana = ShowingMana()
     spendBand:SetShown(mana and band == spendBand)
     refundBand:SetShown(mana and band == refundBand)
-    NotifyOrbs(mana and band or nil)
 end
 
 local function UpdateBands()
@@ -212,7 +172,6 @@ local function RefundUpdate()
         return
     end
     ns.SetResourceOffset(cost * (1 - t), maxMana)
-    NotifyOrbs(ShowingMana() and refundBand or nil)
 end
 
 local function Refund()
@@ -246,9 +205,7 @@ local function OnStart(spellID)
     end
     ReadMaxMana()
     local spellCost = ManaCost(spellID)
-    -- Clearcasting makes the next spell free (true only when we know it's up)
-    if not maxMana or not spellCost or spellCost <= 0 or ns.IsClearcasting() == true
-        or not AnchorBands() then
+    if not maxMana or not spellCost or spellCost <= 0 or not AnchorBands() then
         return
     end
     state, castSpellID, cost = "casting", spellID, spellCost
@@ -355,23 +312,8 @@ end)
 
 -- Settings and preview mode -------------------------------------------------------------------------
 
--- Preview mode's Caster sample: SAMPLE_COST of max mana about to be spent, as a still dark band
--- between the lowered sample fill and ns.SAMPLE_MANA (Resource.lua). Plain numbers, so the band
--- is placed directly rather than anchored to the fills.
-local SAMPLE_COST = 0.15
-local sampleBand = CreateBand(SPEND_COLOR, false, STEALTH_SPEND_COLOR)
-sampleBand:SetSize(SIZE, SIZE * SAMPLE_COST)
-sampleBand:SetPoint("BOTTOM", ns.hud, "CENTER", 0, SIZE * (ns.SAMPLE_MANA - SAMPLE_COST - 0.5))
-local sampleShown = false
-
--- How much of max mana the Caster sample takes off the fill (Resource.lua): the cost while the
--- band shows, else none.
-function ns.SampleManaSpend()
-    return (sampleShown and enabled) and SAMPLE_COST or 0
-end
-
 -- Opacity is the bands' alpha (they're only shown and hidden otherwise). Turning it off ends a
--- prediction in progress; the shift orbs' dim goes with it (ns.onManaPrediction).
+-- prediction in progress.
 ns.RegisterElement({
     id = "resource.prediction",
     zone = "resource",
@@ -388,24 +330,12 @@ ns.RegisterElement({
             Clear()
         end
         local alpha = get("opacity") / 100
-        for _, band in ipairs({ spendBand, refundBand, sampleBand }) do
-            band:SetAlpha(alpha)
-        end
-        sampleBand:SetShown(sampleShown and enabled)
-        if ns.RefreshResource and UnitExists("player") then
-            ns.RefreshResource()
-        end
-    end,
-    sample = function(previewState)
-        sampleShown = previewState == "caster"
-        sampleBand:SetShown(sampleShown and enabled)
-        -- Resource.lua's sample runs before this one (it registered first); redraw it with the cost.
-        ns.RefreshResource()
+        spendBand:SetAlpha(alpha)
+        refundBand:SetAlpha(alpha)
     end,
 })
 
--- After Resource.lua redraws (e.g. it switched to showing mana as a cast took us out of Cat
--- Form): its fill texture may be a new object, and the bands' visibility may change.
+-- After Resource.lua redraws: its fill texture may be a new object, and the bands' visibility may change.
 function ns.onResourceUpdate()
     if state == "idle" then
         return

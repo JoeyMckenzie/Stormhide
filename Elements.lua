@@ -35,7 +35,7 @@ ns.ZONES = {
     { id = "circle", name = L["Circle"],
         groups = { { zone = "resource", name = L["Fill"] }, { zone = "swing", name = L["Ring"] } } },
     { id = "below", name = L["Below"],
-        groups = { { zone = "under", name = L["Arcs and Orbs"] }, { zone = "text", name = L["Text"] } } },
+        groups = { { zone = "text", name = L["Text"] } } },
 }
 
 ns.elements = {} -- in registration order

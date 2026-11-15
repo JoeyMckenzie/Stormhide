@@ -13,12 +13,6 @@ for key, value in pairs(DEFAULTS) do
 end
 
 local hud = ns.hud
-local stealthShare = 1 -- Stealth opacity (below): a share of Overall opacity while stealthed
-
--- Overall opacity, times Stealth opacity while stealthed (Prowl or Shadowmeld).
-local function HudAlpha()
-    return ns.db.hudAlpha * (ns.IsStealthMode() and stealthShare or 1)
-end
 
 hud:SetMovable(true)
 hud:SetClampedToScreen(true)
@@ -58,7 +52,7 @@ local function ApplyLayout()
     ApplySize()
     hud:SetShown(db.hudEnabled)
     hud:SetScale(db.scale)
-    hud:SetAlpha(HudAlpha()) -- every element inherits this, AuraContainers included
+    hud:SetAlpha(ns.db.hudAlpha) -- every element inherits this, AuraContainers included
     hud:ClearAllPoints()
     hud:SetPoint("CENTER", UIParent, "CENTER", db.x / db.scale, db.y / db.scale)
 end
@@ -139,23 +133,3 @@ overlay:SetScript("OnDragStop", function()
 end)
 
 ns.OnLoad(ApplyLayout)
-
--- Stealth Mode, under General in the settings window: Enabled turns stealth's whole look on or off
--- (Stealth.lua: periwinkle fill, smoke, dimmer orbs and this opacity); while stealthed (Prowl or
--- Shadowmeld) the HUD's opacity is the share of Overall opacity, one value for both.
-ns.RegisterElement({
-    id = "stealth",
-    name = L["Stealth Mode"],
-    glyph = { kind = "disc", color = { 0.56, 0.55, 0.94 } },
-    options = {
-        { key = "enabled", type = "checkbox", label = L["Enabled"], default = true },
-        { key = "opacity", type = "slider", label = L["Opacity while stealthed"], min = 10, max = 100, step = 5,
-            format = "%.0f%%", default = 100 },
-    },
-    apply = function(get)
-        ns.SetStealthModeEnabled(get("enabled"))
-        stealthShare = get("opacity") / 100
-        hud:SetAlpha(HudAlpha())
-    end,
-})
-ns.OnStealthChanged(function() hud:SetAlpha(HudAlpha()) end)

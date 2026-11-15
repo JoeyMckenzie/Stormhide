@@ -2,10 +2,10 @@
 
 A World of Warcraft HUD addon for **Enhancement Shaman**, targeting **WoW Forever**. Written in Lua. A mostly AI-built side project; the owner is an experienced engineer but new to addon development.
 
-Stormhide started as a copy of [Catnip](https://github.com/DurtsGaming/Catnip) (a Feral Druid HUD, MIT), history included, so Catnip's engine fixes can be brought over with `git cherry-pick`. Until the Shaman skeleton lands, much of the code and docs still describe Catnip's Druid features: `docs/design.md` is Catnip's Druid spec, kept as a reference for the engine pieces until Stormhide's own replaces it.
+Stormhide started as a copy of [Catnip](https://github.com/DurtsGaming/Catnip) (a Feral Druid HUD, MIT), history included, so Catnip's engine fixes can be brought over with `git cherry-pick`. The Shaman skeleton (2026-11-14) removed Catnip's Druid modules; Catnip's Druid spec, with the history behind the engine pieces, is `git show 0ea2f9c:docs/design.md`.
 
 Before feature work, read:
-- `docs/design.md`: the working spec and current **status** of each feature. It summarizes the owner's originals, `docs/design.pdf` and `docs/layout-sketch.svg`.
+- `docs/design.md`: Stormhide's working spec and current **status** of each feature. `docs/design.pdf` and `docs/layout-sketch.svg` are still Catnip's originals.
 - `docs/architecture.md`: code map, shared `ns` helpers, layering, reusable patterns, textures, debugging and releasing.
 - `docs/api-research.md`: what the Forever API allows in combat, verified facts, and dead ends not to retry.
 
